@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Admina - KP Las Puszczykowo</title>
+    <link rel="stylesheet" href="admin-style.css">
+</head>
+<body>
+    <div class="admin-wrapper">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                <img src="/images/logo-laspuszczykowo.png" alt="KP Las Logo">
+                <div>
+                    <h2>KP Las</h2>
+                    <p>Panel Admina</p>
+                </div>
+            </div>
+            <nav class="sidebar-nav">
+                <button class="nav-btn active" data-tab="dashboard">📊 Dashboard</button>
+                <button class="nav-btn" data-tab="news">📰 Aktualności</button>
+                <button class="nav-btn" data-tab="matches">⚽ Mecze</button>
+                <button class="nav-btn" data-tab="players">👥 Zawodnicy</button>
+                <button class="nav-btn" data-tab="gallery">📷 Galeria</button>
+                <button class="nav-btn" data-tab="sponsors">🏆 Sponsorzy</button>
+                <button class="nav-btn" data-tab="messages">✉️ Wiadomości</button>
+            </nav>
+            <button class="logout-btn" id="logoutBtn">🚪 Wyloguj</button>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="top-bar">
+                <h1 id="pageTitle">Dashboard</h1>
+                <a href="index.html" class="btn-view-site" target="_blank">👁️ Zobacz Stronę</a>
+            </div>
+
+            <!-- Dashboard Tab -->
+            <div class="tab-content active" id="dashboardTab">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">📰</div>
+                        <div class="stat-info">
+                            <div class="stat-number" id="statsNews">0</div>
+                            <div class="stat-label">Aktualności</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">⚽</div>
+                        <div class="stat-info">
+                            <div class="stat-number" id="statsMatches">0</div>
+                            <div class="stat-label">Mecze</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">👥</div>
+                        <div class="stat-info">
+                            <div class="stat-number" id="statsPlayers">0</div>
+                            <div class="stat-label">Zawodnicy</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">📷</div>
+                        <div class="stat-info">
+                            <div class="stat-number" id="statsGallery">0</div>
+                            <div class="stat-label">Zdjęcia</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🏆</div>
+                        <div class="stat-info">
+                            <div class="stat-number" id="statsSponsors">0</div>
+                            <div class="stat-label">Sponsorzy</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">✉️</div>
+                        <div class="stat-info">
+                            <div class="stat-number" id="statsMessages">0</div>
+                            <div class="stat-label">Wiadomości</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-grid">
+                    <div class="dashboard-card">
+                        <h2>Ostatnie Aktualności</h2>
+                        <div id="dashboardNewsList" class="dashboard-list">
+                            <p class="empty-message">Brak aktualności</p>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-card">
+                        <h2>Ostatnie Mecze</h2>
+                        <div id="dashboardMatchesList" class="dashboard-list">
+                            <p class="empty-message">Brak meczów</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- News Tab -->
+            <div class="tab-content" id="newsTab">
+                <div class="form-card">
+                    <h2>Dodaj Nową Aktualność</h2>
+                    <form id="newsForm">
+                        <div class="form-group">
+                            <label>Tytuł</label>
+                            <input type="text" name="title" required placeholder="Tytuł aktualności">
+                        </div>
+                        <div class="form-group">
+                            <label>Treść</label>
+                            <textarea name="content" required rows="4" placeholder="Treść aktualności..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Data</label>
+                            <input type="date" name="date" required>
+                        </div>
+                        <button type="submit" class="btn-primary">➕ Dodaj Aktualność</button>
+                    </form>
+                </div>
+
+                <div class="list-card">
+                    <h2>Wszystkie Aktualności</h2>
+                    <div id="newsList" class="items-list">
+                        <p class="empty-message">Brak aktualności</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Matches Tab -->
+            <div class="tab-content" id="matchesTab">
+                <div class="form-card">
+                    <h2>Dodaj Wynik Meczu</h2>
+                    <form id="matchForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Drużyna Gospodarzy</label>
+                                <input type="text" name="homeTeam" required placeholder="KP Las Puszczykowo">
+                            </div>
+                            <div class="form-group">
+                                <label>Drużyna Gości</label>
+                                <input type="text" name="awayTeam" required placeholder="Przeciwnik">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Wynik Gospodarzy</label>
+                                <input type="number" name="homeScore" required min="0" placeholder="0">
+                            </div>
+                            <div class="form-group">
+                                <label>Wynik Gości</label>
+                                <input type="number" name="awayScore" required min="0" placeholder="0">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Data Meczu</label>
+                            <input type="date" name="date" required>
+                        </div>
+                        <button type="submit" class="btn-primary">➕ Dodaj Mecz</button>
+                    </form>
+                </div>
+
+                <div class="list-card">
+                    <h2>Wszystkie Mecze</h2>
+                    <div id="matchesList" class="items-list">
+                        <p class="empty-message">Brak wyników meczów</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Players Tab -->
+            <div class="tab-content" id="playersTab">
+                <div class="form-card">
+                    <h2>Dodaj Zawodnika</h2>
+                    <form id="playerForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Imię i Nazwisko</label>
+                                <input type="text" name="name" required placeholder="Jan Kowalski">
+                            </div>
+                            <div class="form-group">
+                                <label>Numer</label>
+                                <input type="number" name="number" required min="1" max="99" placeholder="10">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Pozycja</label>
+                                <select name="position" required>
+                                    <option value="">Wybierz pozycję</option>
+                                    <option value="GK">Bramkarz (GK)</option>
+                                    <option value="DF">Obrońca (DF)</option>
+                                    <option value="MF">Pomocnik (MF)</option>
+                                    <option value="FW">Napastnik (FW)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Wiek</label>
+                                <input type="number" name="age" required min="15" max="50" placeholder="25">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Wzrost (cm)</label>
+                                <input type="text" name="height" required placeholder="180 cm">
+                            </div>
+                            <div class="form-group">
+                                <label>Narodowość</label>
+                                <input type="text" name="nationality" required placeholder="Polska">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Pozycja X (0-100%)</label>
+                                <input type="number" name="x" required min="0" max="100" placeholder="50">
+                            </div>
+                            <div class="form-group">
+                                <label>Pozycja Y (0-100%)</label>
+                                <input type="number" name="y" required min="0" max="100" placeholder="50">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn-primary">➕ Dodaj Zawodnika</button>
+                    </form>
+                </div>
+
+                <div class="list-card">
+                    <h2>Wszyscy Zawodnicy</h2>
+                    <div id="playersList" class="items-list players-grid">
+                        <p class="empty-message">Brak zawodników</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gallery Tab -->
+            <div class="tab-content" id="galleryTab">
+                <div class="form-card">
+                    <h2>Dodaj Zdjęcie do Galerii</h2>
+                    <form id="galleryForm">
+                        <div class="form-group">
+                            <label>URL Zdjęcia</label>
+                            <input type="url" name="url" required placeholder="https://example.com/image.jpg">
+                        </div>
+                        <div class="form-group">
+                            <label>Opis</label>
+                            <input type="text" name="caption" required placeholder="Opis zdjęcia">
+                        </div>
+                        <div class="form-group">
+                            <label>Data</label>
+                            <input type="date" name="date" required>
+                        </div>
+                        <button type="submit" class="btn-primary">➕ Dodaj Zdjęcie</button>
+                    </form>
+                </div>
+
+                <div class="list-card">
+                    <h2>Wszystkie Zdjęcia</h2>
+                    <div id="galleryList" class="items-list gallery-grid">
+                        <p class="empty-message">Brak zdjęć</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sponsors Tab -->
+            <div class="tab-content" id="sponsorsTab">
+                <div class="form-card">
+                    <h2>Dodaj Sponsora</h2>
+                    <form id="sponsorForm">
+                        <div class="form-group">
+                            <label>Nazwa Sponsora</label>
+                            <input type="text" name="name" required placeholder="Nazwa Firmy">
+                        </div>
+                        <div class="form-group">
+                            <label>URL Logo</label>
+                            <input type="url" name="logo" required placeholder="https://example.com/logo.png">
+                        </div>
+                        <div class="form-group">
+                            <label>Strona Internetowa</label>
+                            <input type="url" name="website" placeholder="https://example.com">
+                        </div>
+                        <button type="submit" class="btn-primary">➕ Dodaj Sponsora</button>
+                    </form>
+                </div>
+
+                <div class="list-card">
+                    <h2>Wszyscy Sponsorzy</h2>
+                    <div id="sponsorsList" class="items-list sponsors-grid">
+                        <p class="empty-message">Brak sponsorów</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Messages Tab -->
+            <div class="tab-content" id="messagesTab">
+                <div class="list-card">
+                    <h2>Wiadomości z Formularza Kontaktowego</h2>
+                    <div id="messagesList" class="items-list">
+                        <p class="empty-message">Brak wiadomości</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+    
+    <script src="admin-script.js"></script>
+</body>
+</html>

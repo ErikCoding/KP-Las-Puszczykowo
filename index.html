@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KP Las Puszczykowo - Piłkarski Klub Sportowy</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container nav-container">
+            <a href="index.html" class="logo-link">
+                <img src="/images/logo-laspuszczykowo.png" alt="KP Las Logo" class="logo-img">
+                <div>
+                    <h1 class="logo-title">KP Las Puszczykowo</h1>
+                    <p class="logo-subtitle">Piłkarski Klub Sportowy</p>
+                </div>
+            </a>
+            <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
+            <div class="nav-links" id="navLinks">
+                <a href="#hero" class="nav-link active">Start</a>
+                <a href="#about" class="nav-link">O Klubie</a>
+                <a href="#squad" class="nav-link">Skład</a>
+                <a href="#gallery" class="nav-link">Galeria</a>
+                <a href="#sponsors" class="nav-link">Sponsorzy</a>
+                <a href="#contact" class="nav-link">Kontakt</a>
+                <a href="#" class="nav-link hidden-admin-btn" id="hiddenAdminBtn" title="5x kliknięcie aby dostać się do panelu">⚙️</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="hero" class="hero-section">
+        <div class="hero-bg" id="heroBg"></div>
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <h1 class="hero-title">KP Las <span class="highlight-yellow">Puszczykowo</span></h1>
+            <p class="hero-subtitle">Pasja, Siła, Zwycięstwo</p>
+            <div class="hero-buttons">
+                <a href="#squad" class="btn btn-primary">Zobacz Skład</a>
+                <a href="#about" class="btn btn-secondary">O Klubie</a>
+            </div>
+        </div>
+        <div class="scroll-indicator">
+            <div class="scroll-dot"></div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about-section">
+        <div class="container">
+            <h2 class="section-title">O <span class="highlight-red">Klubie</span></h2>
+            <div class="about-grid">
+                <div class="about-card">
+                    <h3 class="about-card-title">Historia Klubu</h3>
+                    <p>KP Las Puszczykowo to klub piłkarski z bogatą tradycją, założony w 1976 roku. Przez lata staliśmy się integralną częścią lokalnej społeczności.</p>
+                    <p>Nasza nazwa nawiązuje do pięknych lasów otaczających Puszczykowo, które stanowią naturalne środowisko treningowe dla naszych zawodników.</p>
+                </div>
+                <div class="about-card">
+                    <h3 class="about-card-title">Nasza Misja</h3>
+                    <p>Misją KP Las Puszczykowo jest rozwijanie talentów piłkarskich oraz kształtowanie charakterów młodych sportowców.</p>
+                    <ul class="mission-list">
+                        <li>Pasja i zaangażowanie w sport</li>
+                        <li>Fair play i szacunek dla rywali</li>
+                        <li>Praca zespołowa i solidarność</li>
+                    </ul>
+                </div>
+                <div class="about-stats">
+                    <div class="stat-item">
+                        <div class="stat-number red">48</div>
+                        <p class="stat-label">Lat Tradycji</p>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number green">150+</div>
+                        <p class="stat-label">Zawodników</p>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number yellow">25+</div>
+                        <p class="stat-label">Trofeów</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- News Section -->
+    <section id="news" class="news-section">
+        <div class="container">
+            <h2 class="section-title">Ostatnie <span class="highlight-red">Aktualności</span></h2>
+            <div id="newsGrid" class="news-grid">
+                <p class="empty-message">Brak aktualności. Dodaj nowe w panelu admina.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Matches Section -->
+    <section id="matches" class="matches-section">
+        <div class="container">
+            <h2 class="section-title">Ostatnie <span class="highlight-red">Mecze</span></h2>
+            <div id="matchesList" class="matches-list">
+                <p class="empty-message">Brak wyników meczów. Dodaj nowe w panelu admina.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Squad Section -->
+    <section id="squad" class="squad-section">
+        <div class="container">
+            <h2 class="section-title">Nasz <span class="highlight-red">Skład</span></h2>
+            <p class="section-subtitle">Najedź na zawodnika aby zobaczyć szczegóły</p>
+            
+            <div class="field-container">
+                <div class="football-field" id="footballField">
+                    <!-- Players will be added via JavaScript -->
+                </div>
+            </div>
+            
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color gk"></div>
+                    <span>Bramkarz</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color df"></div>
+                    <span>Obrońca</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color mf"></div>
+                    <span>Pomocnik</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color fw"></div>
+                    <span>Napastnik</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery Section -->
+    <section id="gallery" class="gallery-section">
+        <div class="container">
+            <h2 class="section-title">Nasza <span class="highlight-red">Galeria</span></h2>
+            <p class="section-subtitle">Chwile, które na zawsze pozostaną w naszej pamięci</p>
+            <div id="galleryGrid" class="gallery-grid">
+                <p class="empty-message">Brak zdjęć w galerii.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sponsors Section -->
+    <section id="sponsors" class="sponsors-section">
+        <div class="container">
+            <h2 class="section-title">Nasi <span class="highlight-red">Sponsorzy</span></h2>
+            <div id="sponsorsGrid" class="sponsors-grid">
+                <p class="empty-message">Brak sponsorów do wyświetlenia.</p>
+            </div>
+            <div class="cta-sponsor">
+                <h3>Zostań Naszym Sponsorem</h3>
+                <p>Dołącz do grona firm wspierających rozwój lokalnego sportu</p>
+                <a href="#contact" class="btn btn-primary">Skontaktuj się z nami</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact-section">
+        <div class="container">
+            <h2 class="section-title"><span class="highlight-red">Kontakt</span></h2>
+            <p class="section-subtitle">Skontaktuj się z nami</p>
+            
+            <div class="contact-grid">
+                <div class="contact-form-wrapper">
+                    <h3>Wyślij Wiadomość</h3>
+                    <form id="contactForm" class="contact-form">
+                        <div class="form-group">
+                            <label>Imię i Nazwisko</label>
+                            <input type="text" name="name" required placeholder="Jan Kowalski">
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" name="email" required placeholder="jan@example.com">
+                        </div>
+                        <div class="form-group">
+                            <label>Temat</label>
+                            <input type="text" name="subject" required placeholder="Temat wiadomości">
+                        </div>
+                        <div class="form-group">
+                            <label>Wiadomość</label>
+                            <textarea name="message" required rows="5" placeholder="Twoja wiadomość..."></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">Wyślij Wiadomość</button>
+                        <div id="formSuccess" class="form-success" style="display: none;">
+                            Wiadomość została wysłana!
+                        </div>
+                    </form>
+                </div>
+                
+                <div class="contact-info-wrapper">
+                    <div class="contact-info-card">
+                        <h3>Informacje Kontaktowe</h3>
+                        <div class="contact-info-item">
+                            <span class="contact-icon">📍</span>
+                            <div>
+                                <h4>Adres</h4>
+                                <p>ul. Sportowa 1<br>62-040 Puszczykowo<br>Polska</p>
+                            </div>
+                        </div>
+                        <div class="contact-info-item">
+                            <span class="contact-icon">📧</span>
+                            <div>
+                                <h4>Email</h4>
+                                <p>kontakt@kplaspuszczykowo.pl<br>trening@kplaspuszczykowo.pl</p>
+                            </div>
+                        </div>
+                        <div class="contact-info-item">
+                            <span class="contact-icon">📞</span>
+                            <div>
+                                <h4>Telefon</h4>
+                                <p>+48 123 456 789<br>+48 987 654 321</p>
+                            </div>
+                        </div>
+                        <div class="contact-info-item">
+                            <span class="contact-icon">⏰</span>
+                            <div>
+                                <h4>Godziny Otwarcia</h4>
+                                <p>Pn-Pt: 16:00 - 20:00<br>Sb-Nd: 10:00 - 18:00</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="social-media-card">
+                        <h3>Media Społecznościowe</h3>
+                        <div class="social-grid">
+                            <a href="#" class="social-link">
+                                <span class="social-icon">📘</span>
+                                <span>Facebook</span>
+                            </a>
+                            <a href="#" class="social-link">
+                                <span class="social-icon">📷</span>
+                                <span>Instagram</span>
+                            </a>
+                            <a href="#" class="social-link">
+                                <span class="social-icon">🐦</span>
+                                <span>Twitter</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="footer-logo">
+                        <img src="/images/logo-laspuszczykowo.png" alt="KP Las Logo">
+                        <div>
+                            <h3>KP Las Puszczykowo</h3>
+                            <p>Piłkarski Klub Sportowy</p>
+                        </div>
+                    </div>
+                    <p>Pasja, determinacja i duch drużyny - to nasza siła.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Nawigacja</h4>
+                    <a href="#hero">Start</a>
+                    <a href="#about">O Klubie</a>
+                    <a href="#squad">Skład</a>
+                    <a href="#gallery">Galeria</a>
+                    <a href="#sponsors">Sponsorzy</a>
+                    <a href="#contact">Kontakt</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Kontakt</h4>
+                    <p>Puszczykowo, Polska</p>
+                    <p>kontakt@kplaspuszczykowo.pl</p>
+                    <p>+48 123 456 789</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© <span id="currentYear"></span> KP Las Puszczykowo. Wszystkie prawa zastrzeżone.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Player Modal -->
+    <div id="playerModal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" id="closePlayerModal">×</button>
+            <div id="playerModalContent"></div>
+        </div>
+    </div>
+
+    <!-- Lightbox Modal -->
+    <div id="lightbox" class="lightbox">
+        <button class="lightbox-close" id="closeLightbox">×</button>
+        <div class="lightbox-content">
+            <img id="lightboxImg" src="/placeholder.svg" alt="">
+            <div class="lightbox-caption">
+                <p id="lightboxCaption"></p>
+                <p id="lightboxDate"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Added Firebase SDK scripts -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+    
+    <script src="script.js"></script>
+</body>
+</html>
