@@ -13,7 +13,6 @@
 
 body {
   font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  /* Dark theme with glassmorphism for login screen */
   background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
   min-height: 100vh;
   display: flex;
@@ -24,13 +23,13 @@ body {
   overflow: hidden;
 }
 
-/* Added animated background effect */
+/* Enhanced animated background effect */
 body::before {
   content: "";
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at 20% 50%, rgba(239, 68, 68, 0.15) 0%, transparent 50%),
-    radial-gradient(circle at 80% 80%, rgba(16, 185, 129, 0.15) 0%, transparent 50%);
+  background: radial-gradient(circle at 20% 50%, rgba(239, 68, 68, 0.2) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(16, 185, 129, 0.2) 0%, transparent 50%);
   animation: gradientShift 10s ease infinite;
 }
 
@@ -38,35 +37,82 @@ body::before {
   0%,
   100% {
     opacity: 1;
+    transform: scale(1);
   }
   50% {
     opacity: 0.7;
+    transform: scale(1.1);
+  }
+}
+
+/* Adding floating particles */
+body::after {
+  content: "";
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(239, 68, 68, 0.1) 0%, transparent 70%);
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation: float 8s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    transform: translate(-50%, -60%) scale(1.2);
   }
 }
 
 .login-container {
-  /* Dark glassmorphism effect */
-  background: rgba(30, 41, 59, 0.6);
-  backdrop-filter: blur(20px);
+  background: rgba(30, 41, 59, 0.7);
+  backdrop-filter: blur(30px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 24px;
   padding: 3rem;
   max-width: 450px;
   width: 100%;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
   position: relative;
   z-index: 1;
-  animation: slideInUp 0.6s ease-out;
+  animation: slideInUp 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
 
+/* Enhanced entrance animation */
 @keyframes slideInUp {
   from {
     opacity: 0;
-    transform: translateY(30px);
+    transform: translateY(50px) scale(0.9);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Adding glowing border effect */
+.login-container::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  background: linear-gradient(45deg, #ef4444, #10b981, #ef4444);
+  background-size: 200% 200%;
+  border-radius: 24px;
+  z-index: -1;
+  opacity: 0.3;
+  animation: borderGlow 3s ease infinite;
+}
+
+@keyframes borderGlow {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
   }
 }
 
@@ -82,22 +128,31 @@ body::before {
   width: 64px;
   height: 64px;
   filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3));
-  transition: transform 0.3s;
+  transition: transform 0.3s ease;
+  animation: logoFloat 3s ease-in-out infinite;
+}
+
+@keyframes logoFloat {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-8px) rotate(5deg);
+  }
 }
 
 .login-logo:hover img {
-  transform: rotate(-5deg) scale(1.05);
+  transform: rotate(-5deg) scale(1.1);
+  animation: none;
 }
 
 .login-logo div h1 {
   font-size: 1.5rem;
-  /* Light text for dark background */
   color: #f1f5f9;
 }
 
 .login-logo div p {
   font-size: 0.875rem;
-  /* Light gray text */
   color: #94a3b8;
 }
 
@@ -106,6 +161,18 @@ h2 {
   color: #ef4444;
   margin-bottom: 2rem;
   font-size: 1.5rem;
+  /* Adding text glow effect */
+  text-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
+  animation: titlePulse 2s ease-in-out infinite;
+}
+
+@keyframes titlePulse {
+  0%, 100% {
+    text-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
+  }
+  50% {
+    text-shadow: 0 0 30px rgba(239, 68, 68, 0.8);
+  }
 }
 
 .form-group {
@@ -115,7 +182,6 @@ h2 {
 .form-group label {
   display: block;
   margin-bottom: 0.5rem;
-  /* Light text for dark theme */
   color: #f1f5f9;
   font-weight: 500;
 }
@@ -123,26 +189,26 @@ h2 {
 .form-group input {
   width: 100%;
   padding: 1rem;
-  /* Dark input with glassmorphism */
   background: rgba(15, 23, 42, 0.5);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 8px;
-  /* Light text */
   color: #f1f5f9;
   font-size: 1rem;
-  transition: all 0.3s;
+  transition: all 0.3s ease;
 }
 
 .form-group input::placeholder {
   color: #64748b;
 }
 
+/* Enhanced focus effect */
 .form-group input:focus {
   outline: none;
   border-color: #ef4444;
-  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
-  background: rgba(15, 23, 42, 0.7);
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.3), 0 8px 16px rgba(239, 68, 68, 0.2);
+  background: rgba(15, 23, 42, 0.8);
+  transform: translateY(-2px);
 }
 
 .btn-login {
@@ -155,19 +221,41 @@ h2 {
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s;
-  box-shadow: 0 4px 14px 0 rgba(239, 68, 68, 0.4);
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 20px rgba(239, 68, 68, 0.4);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Adding button shimmer effect */
+.btn-login::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left 0.5s;
+}
+
+.btn-login:hover::before {
+  left: 100%;
 }
 
 .btn-login:hover {
   background: linear-gradient(135deg, #dc2626, #b91c1c);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px 0 rgba(239, 68, 68, 0.5);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px rgba(239, 68, 68, 0.6);
+}
+
+.btn-login:active {
+  transform: translateY(-1px);
 }
 
 .error-message {
-  background: rgba(239, 68, 68, 0.15);
-  border: 1px solid rgba(239, 68, 68, 0.3);
+  background: rgba(239, 68, 68, 0.2);
+  border: 1px solid rgba(239, 68, 68, 0.4);
   color: #fca5a5;
   padding: 1rem;
   border-radius: 8px;
@@ -175,11 +263,24 @@ h2 {
   text-align: center;
   display: none;
   backdrop-filter: blur(10px);
+  /* Adding shake animation for errors */
+  animation: shake 0.5s ease;
+}
+
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-10px);
+  }
+  75% {
+    transform: translateX(10px);
+  }
 }
 
 .info-message {
   text-align: center;
-  /* Light gray for dark background */
   color: #94a3b8;
   font-size: 0.875rem;
   margin-top: 1.5rem;
@@ -187,6 +288,12 @@ h2 {
   background: rgba(15, 23, 42, 0.4);
   border-radius: 8px;
   border: 1px solid rgba(255, 255, 255, 0.05);
+  transition: all 0.3s ease;
+}
+
+.info-message:hover {
+  background: rgba(15, 23, 42, 0.6);
+  border-color: rgba(255, 255, 255, 0.1);
 }
 
 .info-message strong {
@@ -200,13 +307,14 @@ h2 {
   text-decoration: none;
   margin-top: 1.5rem;
   font-weight: 500;
-  transition: color 0.3s;
+  transition: all 0.3s ease;
 }
 
 .back-link:hover {
   color: #059669;
+  text-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+  transform: translateX(-5px);
 }
-
     </style>
 </head>
 <body>

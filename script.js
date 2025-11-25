@@ -37,6 +37,8 @@ let sponsorsData = []
 
 // Initialize
 document.addEventListener("DOMContentLoaded", () => {
+  showPageLoader()
+
   initFirebase()
   setupNavigation()
   setupMobileMenu()
@@ -44,11 +46,70 @@ document.addEventListener("DOMContentLoaded", () => {
   setupHeroSlideshow()
   setupParallax()
   setupScrollIndicator()
+  setupScrollAnimations()
+  setupNavbarScrollEffect()
   loadAllContent()
   setupContactForm()
   setupLightbox()
   updateFooterYear()
+
+  setTimeout(() => {
+    hidePageLoader()
+  }, 500)
 })
+
+function showPageLoader() {
+  const loader = document.createElement("div")
+  loader.className = "page-loader"
+  loader.innerHTML = '<div class="loader-spinner"></div>'
+  document.body.appendChild(loader)
+}
+
+function hidePageLoader() {
+  const loader = document.querySelector(".page-loader")
+  if (loader) {
+    loader.classList.add("hidden")
+    setTimeout(() => {
+      loader.remove()
+    }, 500)
+  }
+}
+
+function setupNavbarScrollEffect() {
+  const navbar = document.querySelector(".navbar")
+
+  window.addEventListener("scroll", () => {
+    if (window.scrollY > 100) {
+      navbar.classList.add("scrolled")
+    } else {
+      navbar.classList.remove("scrolled")
+    }
+  })
+}
+
+function setupScrollAnimations() {
+  const observerOptions = {
+    threshold: 0.1,
+    rootMargin: "0px 0px -100px 0px",
+  }
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add("visible")
+      }
+    })
+  }, observerOptions)
+
+  // Observe all animated elements
+  const animatedElements = document.querySelectorAll(
+    ".section-title, .section-subtitle, .about-card, .stat-item, .news-card, .match-card, .gallery-item, .sponsor-item",
+  )
+
+  animatedElements.forEach((el) => {
+    observer.observe(el)
+  })
+}
 
 // Initialize default data
 function initializeData() {
@@ -202,7 +263,26 @@ function setupHiddenAdminButton() {
 }
 
 function setupScrollIndicator() {
-  // Setup scroll indicator logic here if needed
+  const scrollIndicator = document.querySelector(".scroll-indicator")
+
+  if (scrollIndicator) {
+    scrollIndicator.addEventListener("click", () => {
+      const aboutSection = document.getElementById("about")
+      if (aboutSection) {
+        aboutSection.scrollIntoView({ behavior: "smooth" })
+      }
+    })
+
+    window.addEventListener("scroll", () => {
+      if (window.scrollY > 100) {
+        scrollIndicator.style.opacity = "0"
+        scrollIndicator.style.pointerEvents = "none"
+      } else {
+        scrollIndicator.style.opacity = "1"
+        scrollIndicator.style.pointerEvents = "auto"
+      }
+    })
+  }
 }
 
 function setupContactForm() {
@@ -289,7 +369,7 @@ function setupParallax() {
     const heroHeight = window.innerHeight
 
     if (scrolled < heroHeight) {
-      const scale = 1 + (scrolled / heroHeight) * 0.2
+      const scale = 1.1 + (scrolled / heroHeight) * 0.15
       const translateY = scrolled * 0.5
       heroBg.style.transform = `scale(${scale}) translateY(${translateY}px)`
     }
@@ -352,8 +432,8 @@ function renderNews() {
   newsGrid.innerHTML = newsData
     .slice(0, 3)
     .map(
-      (news) => `
-        <div class="news-card">
+      (news, index) => `
+        <div class="news-card" style="animation-delay: ${index * 0.1}s">
             <div class="news-card-img">
                 <img src="https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=600&q=80" alt="${news.title}">
             </div>
@@ -366,6 +446,9 @@ function renderNews() {
     `,
     )
     .join("")
+
+  // Re-observe new elements
+  setupScrollAnimations()
 }
 
 // Render Matches
@@ -380,8 +463,8 @@ function renderMatches() {
   matchesList.innerHTML = matchesData
     .slice(0, 3)
     .map(
-      (match) => `
-        <div class="match-card">
+      (match, index) => `
+        <div class="match-card" style="animation-delay: ${index * 0.1}s">
             <div class="match-teams">
                 <div class="match-team home">${match.homeTeam}</div>
                 <div class="match-score">
@@ -396,6 +479,8 @@ function renderMatches() {
     `,
     )
     .join("")
+
+  setupScrollAnimations()
 }
 
 // Render Players on Field
@@ -569,8 +654,8 @@ function renderGallery() {
 
   galleryGrid.innerHTML = galleryData
     .map(
-      (image) => `
-        <div class="gallery-item" onclick="showLightbox('${image.url}', '${image.caption}', '${image.date}')">
+      (image, index) => `
+        <div class="gallery-item" style="animation-delay: ${index * 0.05}s" onclick="showLightbox('${image.url}', '${image.caption}', '${image.date}')">
             <img src="${image.url}" alt="${image.caption}">
             <div class="gallery-overlay">
                 <div class="gallery-caption">${image.caption}</div>
@@ -580,6 +665,8 @@ function renderGallery() {
     `,
     )
     .join("")
+
+  setupScrollAnimations()
 }
 
 // Show Lightbox
@@ -602,13 +689,15 @@ function renderSponsors() {
 
   sponsorsGrid.innerHTML = sponsorsData
     .map(
-      (sponsor) => `
-        <a href="${sponsor.website || "#"}" class="sponsor-item" target="_blank" rel="noopener noreferrer">
+      (sponsor, index) => `
+        <a href="${sponsor.website || "#"}" class="sponsor-item" style="animation-delay: ${index * 0.05}s" target="_blank" rel="noopener noreferrer">
             <img src="${sponsor.logo}" alt="${sponsor.name}">
         </a>
     `,
     )
     .join("")
+
+  setupScrollAnimations()
 }
 
 // Helper function to save messages to localStorage
