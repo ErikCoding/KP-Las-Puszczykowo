@@ -6,8 +6,8 @@ const firebaseConfig = {
   projectId: "kp-las-puszczykowo",
   storageBucket: "kp-las-puszczykowo.firebasestorage.app",
   messagingSenderId: "756811498454",
-  appId: "1:756811498454:web:532a4171b9def370055a77"
-};
+  appId: "1:756811498454:web:532a4171b9def370055a77",
+}
 
 // Import Firebase
 const firebase = window.firebase
@@ -128,8 +128,6 @@ function setupForms() {
       age: Number.parseInt(formData.get("age")),
       height: formData.get("height"),
       nationality: formData.get("nationality"),
-      x: Number.parseInt(formData.get("x")),
-      y: Number.parseInt(formData.get("y")),
       stats: { matches: 0, goals: 0, assists: 0 },
     }
 
@@ -142,32 +140,92 @@ function setupForms() {
   document.getElementById("galleryForm").addEventListener("submit", async (e) => {
     e.preventDefault()
     const formData = new FormData(e.target)
-    const galleryItem = {
-      id: Date.now(),
-      url: formData.get("url"),
-      caption: formData.get("caption"),
-      date: formData.get("date"),
-    }
+    const fileInput = document.getElementById("galleryImageFile")
+    const file = fileInput.files[0]
 
-    await saveData("gallery", galleryItem)
-    e.target.reset()
-    loadGallery()
+    let imageUrl = formData.get("url")
+
+    // If file is uploaded, use that instead of URL
+    if (file) {
+      const reader = new FileReader()
+      reader.onload = async (event) => {
+        imageUrl = event.target.result
+
+        const galleryItem = {
+          id: Date.now(),
+          url: imageUrl,
+          caption: formData.get("caption"),
+          date: formData.get("date"),
+        }
+
+        await saveData("gallery", galleryItem)
+        e.target.reset()
+        fileInput.value = ""
+        document.getElementById("galleryImagePreview").style.display = "none"
+        loadGallery()
+      }
+      reader.readAsDataURL(file)
+    } else if (imageUrl) {
+      // Use URL if provided
+      const galleryItem = {
+        id: Date.now(),
+        url: imageUrl,
+        caption: formData.get("caption"),
+        date: formData.get("date"),
+      }
+
+      await saveData("gallery", galleryItem)
+      e.target.reset()
+      loadGallery()
+    } else {
+      alert("Proszę dodać zdjęcie (plik lub URL)")
+    }
   })
 
   // Sponsor Form
   document.getElementById("sponsorForm").addEventListener("submit", async (e) => {
     e.preventDefault()
     const formData = new FormData(e.target)
-    const sponsorItem = {
-      id: Date.now(),
-      name: formData.get("name"),
-      logo: formData.get("logo"),
-      website: formData.get("website"),
-    }
+    const fileInput = document.getElementById("sponsorLogoFile")
+    const file = fileInput.files[0]
 
-    await saveData("sponsors", sponsorItem)
-    e.target.reset()
-    loadSponsors()
+    let logoUrl = formData.get("logo")
+
+    // If file is uploaded, use that instead of URL
+    if (file) {
+      const reader = new FileReader()
+      reader.onload = async (event) => {
+        logoUrl = event.target.result
+
+        const sponsorItem = {
+          id: Date.now(),
+          name: formData.get("name"),
+          logo: logoUrl,
+          website: formData.get("website"),
+        }
+
+        await saveData("sponsors", sponsorItem)
+        e.target.reset()
+        fileInput.value = ""
+        document.getElementById("sponsorLogoPreview").style.display = "none"
+        loadSponsors()
+      }
+      reader.readAsDataURL(file)
+    } else if (logoUrl) {
+      // Use URL if provided
+      const sponsorItem = {
+        id: Date.now(),
+        name: formData.get("name"),
+        logo: logoUrl,
+        website: formData.get("website"),
+      }
+
+      await saveData("sponsors", sponsorItem)
+      e.target.reset()
+      loadSponsors()
+    } else {
+      alert("Proszę dodać logo (plik lub URL)")
+    }
   })
 }
 
@@ -328,6 +386,21 @@ async function loadPlayers() {
             <div class="player-number ${player.position.toLowerCase()}">${player.number}</div>
             <div class="player-name">${player.name}</div>
             <div class="player-position">${player.position} | ${player.age} lat</div>
+            <div class="player-stats">
+                <div class="stat-box">
+                    <div class="stat-value">${player.stats.matches}</div>
+                    <div class="stat-label-small">Mecze</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value">${player.stats.goals}</div>
+                    <div class="stat-label-small">Gole</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value">${player.stats.assists}</div>
+                    <div class="stat-label-small">Asysty</div>
+                </div>
+            </div>
+            <button class="btn-edit" onclick="editPlayerStats(${player.id}, '${player.name}', ${player.stats.matches}, ${player.stats.goals}, ${player.stats.assists})">✏️ Edytuj Statystyki</button>
             <button class="btn-delete" onclick="deletePlayer(${player.id})">🗑️ Usuń</button>
         </div>
     `,
@@ -335,10 +408,47 @@ async function loadPlayers() {
     .join("")
 }
 
-async function deletePlayer(id) {
-  if (confirm("Czy na pewno chcesz usunąć tego zawodnika?")) {
-    await deleteData("players", id)
-    loadPlayers()
+async function editPlayerStats(playerId, playerName, currentMatches, currentGoals, currentAssists) {
+  const matches = prompt(`Edytuj liczbę meczów dla ${playerName}:`, currentMatches)
+  if (matches === null) return
+
+  const goals = prompt(`Edytuj liczbę goli dla ${playerName}:`, currentGoals)
+  if (goals === null) return
+
+  const assists = prompt(`Edytuj liczbę asyst dla ${playerName}:`, currentAssists)
+  if (assists === null) return
+
+  // Update player stats
+  if (firebaseInitialized) {
+    try {
+      await db.ref(`players/${playerId}/stats`).update({
+        matches: Number.parseInt(matches) || 0,
+        goals: Number.parseInt(goals) || 0,
+        assists: Number.parseInt(assists) || 0,
+      })
+      console.log(`[v0] Updated stats for player ${playerId}`)
+    } catch (error) {
+      console.error("[v0] Firebase update error:", error)
+      updateStatsLocalStorage(playerId, matches, goals, assists)
+    }
+  } else {
+    updateStatsLocalStorage(playerId, matches, goals, assists)
+  }
+
+  loadPlayers()
+  updateDashboard()
+}
+
+function updateStatsLocalStorage(playerId, matches, goals, assists) {
+  const players = JSON.parse(localStorage.getItem("players")) || []
+  const playerIndex = players.findIndex((p) => p.id === playerId)
+  if (playerIndex !== -1) {
+    players[playerIndex].stats = {
+      matches: Number.parseInt(matches) || 0,
+      goals: Number.parseInt(goals) || 0,
+      assists: Number.parseInt(assists) || 0,
+    }
+    localStorage.setItem("players", JSON.stringify(players))
   }
 }
 
@@ -537,4 +647,52 @@ function setupLogout() {
     sessionStorage.removeItem("adminAuthenticated")
     window.location.href = "admin-login.html"
   })
+}
+
+// File upload handling for gallery images
+document.getElementById("galleryImageFile").addEventListener("change", (e) => {
+  const file = e.target.files[0]
+  if (file) {
+    const reader = new FileReader()
+    reader.onload = (event) => {
+      document.getElementById("galleryPreviewImg").src = event.target.result
+      document.getElementById("galleryPreviewName").textContent = file.name
+      document.getElementById("galleryPreviewSize").textContent = `${(file.size / 1024).toFixed(2)} KB`
+      document.getElementById("galleryImagePreview").style.display = "flex"
+    }
+    reader.readAsDataURL(file)
+  }
+})
+
+// File upload handling for sponsor logos
+document.getElementById("sponsorLogoFile").addEventListener("change", (e) => {
+  const file = e.target.files[0]
+  if (file) {
+    const reader = new FileReader()
+    reader.onload = (event) => {
+      document.getElementById("sponsorPreviewImg").src = event.target.result
+      document.getElementById("sponsorPreviewName").textContent = file.name
+      document.getElementById("sponsorPreviewSize").textContent = `${(file.size / 1024).toFixed(2)} KB`
+      document.getElementById("sponsorLogoPreview").style.display = "flex"
+    }
+    reader.readAsDataURL(file)
+  }
+})
+
+// Make functions globally accessible
+window.deletePlayer = deletePlayer
+window.deleteNews = deleteNews
+window.deleteMatch = deleteMatch
+window.deleteGallery = deleteGallery
+window.deleteSponsor = deleteSponsor
+window.deleteMessage = deleteMessage
+window.markAsRead = markAsRead
+window.editPlayerStats = editPlayerStats
+
+async function deletePlayer(id) {
+  if (confirm("Czy na pewno chcesz usunąć tego zawodnika?")) {
+    await deleteData("players", id)
+    await loadPlayers()
+    await updateDashboard()
+  }
 }

@@ -11,7 +11,7 @@
         <!-- Sidebar -->
         <aside class="sidebar">
             <div class="sidebar-logo">
-                <img src="/images/logo-laspuszczykowo.png" alt="KP Las Logo">
+                <img src="logo-LasPuszczykowo-CLEAR_NEW.png" alt="KP Las Logo">
                 <div>
                     <h2>KP Las</h2>
                     <p>Panel Admina</p>
@@ -195,6 +195,7 @@
                                     <option value="MF">Pomocnik (MF)</option>
                                     <option value="FW">Napastnik (FW)</option>
                                 </select>
+                                <small style="color: var(--text-secondary); display: block; margin-top: 0.5rem;">Zawodnik zostanie automatycznie umieszczony na boisku w zależności od pozycji</small>
                             </div>
                             <div class="form-group">
                                 <label>Wiek</label>
@@ -209,16 +210,6 @@
                             <div class="form-group">
                                 <label>Narodowość</label>
                                 <input type="text" name="nationality" required placeholder="Polska">
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label>Pozycja X (0-100%)</label>
-                                <input type="number" name="x" required min="0" max="100" placeholder="50">
-                            </div>
-                            <div class="form-group">
-                                <label>Pozycja Y (0-100%)</label>
-                                <input type="number" name="y" required min="0" max="100" placeholder="50">
                             </div>
                         </div>
                         <button type="submit" class="btn-primary">➕ Dodaj Zawodnika</button>
@@ -239,8 +230,20 @@
                     <h2>Dodaj Zdjęcie do Galerii</h2>
                     <form id="galleryForm">
                         <div class="form-group">
-                            <label>URL Zdjęcia</label>
-                            <input type="url" name="url" required placeholder="https://example.com/image.jpg">
+                            <label>Dodaj zdjęcie</label>
+                            <input type="file" id="galleryImageFile" accept="image/*">
+                            <small style="color: var(--color-gray-600); display: block; margin-top: 0.5rem;">lub wpisz URL poniżej</small>
+                        </div>
+                        <div class="form-group">
+                            <label>URL Zdjęcia (opcjonalnie)</label>
+                            <input type="url" name="url" placeholder="https://example.com/image.jpg">
+                        </div>
+                        <div id="galleryImagePreview" class="file-preview" style="display: none;">
+                            <img id="galleryPreviewImg" src="/placeholder.svg" alt="Preview">
+                            <div class="file-preview-info">
+                                <div class="file-preview-name" id="galleryPreviewName"></div>
+                                <div class="file-preview-size" id="galleryPreviewSize"></div>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label>Opis</label>
@@ -272,8 +275,20 @@
                             <input type="text" name="name" required placeholder="Nazwa Firmy">
                         </div>
                         <div class="form-group">
-                            <label>URL Logo</label>
-                            <input type="url" name="logo" required placeholder="https://example.com/logo.png">
+                            <label>Logo Sponsora</label>
+                            <input type="file" id="sponsorLogoFile" accept="image/*">
+                            <small style="color: var(--color-gray-600); display: block; margin-top: 0.5rem;">lub wpisz URL poniżej</small>
+                        </div>
+                        <div class="form-group">
+                            <label>URL Logo (opcjonalnie)</label>
+                            <input type="url" name="logo" placeholder="https://example.com/logo.png">
+                        </div>
+                        <div id="sponsorLogoPreview" class="file-preview" style="display: none;">
+                            <img id="sponsorPreviewImg" src="/placeholder.svg" alt="Preview">
+                            <div class="file-preview-info">
+                                <div class="file-preview-name" id="sponsorPreviewName"></div>
+                                <div class="file-preview-size" id="sponsorPreviewSize"></div>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label>Strona Internetowa</label>
@@ -301,6 +316,38 @@
                 </div>
             </div>
         </main>
+    </div>
+
+    <!-- Edit Stats Modal -->
+    <div id="editStatsModal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" id="closeEditStatsModal">×</button>
+            <h2 style="margin-bottom: 1.5rem;">Edytuj Statystyki Zawodnika</h2>
+            <div id="editStatsContent">
+                <form id="editStatsForm">
+                    <input type="hidden" id="editPlayerId">
+                    <div class="form-group">
+                        <label>Imię i Nazwisko</label>
+                        <input type="text" id="editPlayerName" disabled style="opacity: 0.6;">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Mecze</label>
+                            <input type="number" id="editMatches" required min="0" placeholder="0">
+                        </div>
+                        <div class="form-group">
+                            <label>Gole</label>
+                            <input type="number" id="editGoals" required min="0" placeholder="0">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Asysty</label>
+                        <input type="number" id="editAssists" required min="0" placeholder="0">
+                    </div>
+                    <button type="submit" class="btn-primary">💾 Zapisz Statystyki</button>
+                </form>
+            </div>
+        </div>
     </div>
 
     <!-- Firebase SDK -->

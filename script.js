@@ -6,24 +6,26 @@ const firebaseConfig = {
   projectId: "kp-las-puszczykowo",
   storageBucket: "kp-las-puszczykowo.firebasestorage.app",
   messagingSenderId: "756811498454",
-  appId: "1:756811498454:web:532a4171b9def370055a77"
-};
+  appId: "1:756811498454:web:532a4171b9def370055a77",
+}
 
 const firebase = window.firebase
 let firebaseInitialized = false
 let db = null
 
-try {
-  if (firebaseConfig.apiKey !== "YOUR_API_KEY") {
-    firebase.initializeApp(firebaseConfig)
-    db = firebase.database()
-    firebaseInitialized = true
-    console.log("[v0] Firebase initialized on main page")
-  } else {
-    console.log("[v0] Firebase not configured - using localStorage fallback")
+function initFirebase() {
+  try {
+    if (firebaseConfig.apiKey !== "YOUR_API_KEY") {
+      firebase.initializeApp(firebaseConfig)
+      db = firebase.database()
+      firebaseInitialized = true
+      console.log("[v0] Firebase initialized on main page")
+    } else {
+      console.log("[v0] Firebase not configured - using localStorage fallback")
+    }
+  } catch (error) {
+    console.error("[v0] Firebase initialization error:", error)
   }
-} catch (error) {
-  console.error("[v0] Firebase initialization error:", error)
 }
 
 // Data Storage
@@ -35,16 +37,21 @@ let sponsorsData = []
 
 // Initialize
 document.addEventListener("DOMContentLoaded", () => {
-  initializeData()
-  setupEventListeners()
-  loadAllData()
+  initFirebase()
+  setupNavigation()
+  setupMobileMenu()
+  setupHiddenAdminButton()
+  setupHeroSlideshow()
   setupParallax()
-  document.getElementById("currentYear").textContent = new Date().getFullYear()
+  setupScrollIndicator()
+  loadAllContent()
+  setupContactForm()
+  setupLightbox()
+  updateFooterYear()
 })
 
 // Initialize default data
 function initializeData() {
-  // Default Players
   const defaultPlayers = [
     {
       id: 1,
@@ -55,8 +62,6 @@ function initializeData() {
       nationality: "Polska",
       height: "188 cm",
       stats: { matches: 15, goals: 0, assists: 0 },
-      x: 50,
-      y: 90,
     },
     {
       id: 2,
@@ -67,8 +72,6 @@ function initializeData() {
       nationality: "Polska",
       height: "182 cm",
       stats: { matches: 14, goals: 1, assists: 2 },
-      x: 25,
-      y: 75,
     },
     {
       id: 3,
@@ -79,8 +82,6 @@ function initializeData() {
       nationality: "Polska",
       height: "185 cm",
       stats: { matches: 15, goals: 2, assists: 1 },
-      x: 42,
-      y: 75,
     },
     {
       id: 4,
@@ -91,8 +92,6 @@ function initializeData() {
       nationality: "Polska",
       height: "180 cm",
       stats: { matches: 13, goals: 0, assists: 3 },
-      x: 58,
-      y: 75,
     },
     {
       id: 5,
@@ -103,8 +102,6 @@ function initializeData() {
       nationality: "Polska",
       height: "183 cm",
       stats: { matches: 12, goals: 1, assists: 1 },
-      x: 75,
-      y: 75,
     },
     {
       id: 6,
@@ -115,8 +112,6 @@ function initializeData() {
       nationality: "Polska",
       height: "178 cm",
       stats: { matches: 15, goals: 3, assists: 5 },
-      x: 35,
-      y: 50,
     },
     {
       id: 7,
@@ -127,8 +122,6 @@ function initializeData() {
       nationality: "Polska",
       height: "175 cm",
       stats: { matches: 14, goals: 4, assists: 6 },
-      x: 50,
-      y: 45,
     },
     {
       id: 8,
@@ -139,8 +132,6 @@ function initializeData() {
       nationality: "Polska",
       height: "180 cm",
       stats: { matches: 15, goals: 2, assists: 7 },
-      x: 65,
-      y: 50,
     },
     {
       id: 9,
@@ -151,8 +142,6 @@ function initializeData() {
       nationality: "Polska",
       height: "185 cm",
       stats: { matches: 15, goals: 12, assists: 3 },
-      x: 40,
-      y: 20,
     },
     {
       id: 10,
@@ -163,8 +152,6 @@ function initializeData() {
       nationality: "Polska",
       height: "182 cm",
       stats: { matches: 14, goals: 10, assists: 5 },
-      x: 60,
-      y: 20,
     },
   ]
 
@@ -174,16 +161,7 @@ function initializeData() {
 }
 
 // Event Listeners
-function setupEventListeners() {
-  // Mobile menu
-  const mobileMenuBtn = document.getElementById("mobileMenuBtn")
-  const navLinks = document.getElementById("navLinks")
-
-  mobileMenuBtn.addEventListener("click", () => {
-    navLinks.classList.toggle("active")
-    mobileMenuBtn.textContent = navLinks.classList.contains("active") ? "×" : "☰"
-  })
-
+function setupNavigation() {
   // Smooth scroll for nav links
   document.querySelectorAll(".nav-link").forEach((link) => {
     link.addEventListener("click", (e) => {
@@ -192,14 +170,23 @@ function setupEventListeners() {
         const target = document.querySelector(link.getAttribute("href"))
         if (target) {
           target.scrollIntoView({ behavior: "smooth" })
-          navLinks.classList.remove("active")
-          mobileMenuBtn.textContent = "☰"
         }
       }
     })
   })
+}
 
-  // Hidden admin button (5 clicks)
+function setupMobileMenu() {
+  const mobileMenuBtn = document.getElementById("mobileMenuBtn")
+  const navLinks = document.getElementById("navLinks")
+
+  mobileMenuBtn.addEventListener("click", () => {
+    navLinks.classList.toggle("active")
+    mobileMenuBtn.textContent = navLinks.classList.contains("active") ? "×" : "☰"
+  })
+}
+
+function setupHiddenAdminButton() {
   let adminClickCount = 0
   const adminBtn = document.getElementById("hiddenAdminBtn")
   adminBtn.addEventListener("click", (e) => {
@@ -212,8 +199,13 @@ function setupEventListeners() {
       adminClickCount = 0
     }, 2000)
   })
+}
 
-  // Contact form
+function setupScrollIndicator() {
+  // Setup scroll indicator logic here if needed
+}
+
+function setupContactForm() {
   const contactForm = document.getElementById("contactForm")
   contactForm.addEventListener("submit", async (e) => {
     e.preventDefault()
@@ -248,23 +240,14 @@ function setupEventListeners() {
       contactForm.reset()
     }, 3000)
   })
+}
 
-  // Modal close
-  document.getElementById("closePlayerModal").addEventListener("click", () => {
-    document.getElementById("playerModal").classList.remove("active")
-  })
-
+function setupLightbox() {
   document.getElementById("closeLightbox").addEventListener("click", () => {
     document.getElementById("lightbox").classList.remove("active")
   })
 
   // Close modals on background click
-  document.getElementById("playerModal").addEventListener("click", (e) => {
-    if (e.target.id === "playerModal") {
-      document.getElementById("playerModal").classList.remove("active")
-    }
-  })
-
   document.getElementById("lightbox").addEventListener("click", (e) => {
     if (e.target.id === "lightbox") {
       document.getElementById("lightbox").classList.remove("active")
@@ -272,7 +255,32 @@ function setupEventListeners() {
   })
 }
 
-// Parallax Effect
+function setupHeroSlideshow() {
+  const heroBg = document.getElementById("heroBg")
+
+  const images = [
+    "https://scontent-waw2-1.xx.fbcdn.net/v/t39.30808-6/568952751_1393068179489679_1242343292601629705_n.jpg?_nc_cat=104&ccb=1-7&_nc_sid=cc71e4&_nc_ohc=7fWcfM_xYeMQ7kNvwEWcAS6&_nc_oc=AdlMoMdnsfq5EWaDwOgFP3O7T280xCFJ7qHSq1MEM4VgLam43oEZyuJ16CM1w3Zn_ac&_nc_zt=23&_nc_ht=scontent-waw2-1.xx&_nc_gid=BtWJPL6OmZNCdEMAQ9Tl7Q&oh=00_Afhxk_vNhAujSy-4wtm6YhZbEVgvdPe_uvZnh2guxdWfsA&oe=692AA157",
+    "https://scontent-waw2-1.xx.fbcdn.net/v/t39.30808-6/584686196_1416924913770672_2254237206894719496_n.jpg?_nc_cat=108&ccb=1-7&_nc_sid=127cfc&_nc_ohc=yOqaJVeNDZ4Q7kNvwG5HXO-&_nc_oc=Adk9oMDJdCAzomM4y3IEVQNlmiVAqMJNFvHV1I0ig2W1KMSotRdffF82AxS_UPM0Pg8&_nc_zt=23&_nc_ht=scontent-waw2-1.xx&_nc_gid=CS3OqvscGu0STvv31IucSw&oh=00_AfgNaK8enU8rxktmo6srMdZrGIAPczbsKxoQQFoi0evRTw&oe=692ADFA6",
+    "https://scontent-waw2-2.xx.fbcdn.net/v/t39.30808-6/580634285_1410024461127384_5793941285239069198_n.jpg?_nc_cat=106&ccb=1-7&_nc_sid=127cfc&_nc_ohc=BzHjdQQf8oEQ7kNvwHwFvRx&_nc_oc=Adn0SmmKEPU9YC2fxNVzafJiNBLki8aTEBnP9CxIFl8ZuD33-bl4xdaIG8m5yEvZFKo&_nc_zt=23&_nc_ht=scontent-waw2-2.xx&_nc_gid=G9hNadHr8KFO4gErEbdZvw&oh=00_Afh1pNcm043StYUHWcORKS72LymYwPqDWiSJ_ZKElIVjQg&oe=692ABAD1",
+    "https://scontent-waw2-1.xx.fbcdn.net/v/t39.30808-6/583666310_1416925130437317_8222392288335673739_n.jpg?_nc_cat=109&ccb=1-7&_nc_sid=127cfc&_nc_ohc=pOc_3FUZkR0Q7kNvwGKevX2&_nc_oc=Adk8Yb5Hv26ljGzWrXTqsRqrh-TkK5mknjGaNt-_-76IbX0syN5iGTkbPHFPypf5Ljk&_nc_zt=23&_nc_ht=scontent-waw2-1.xx&_nc_gid=Tg2207mRJYy1vCf7UlQRiQ&oh=00_AfhE1aKnCPftYKZY9mugwPBFrk1d3AjHc2T0spzlxKRtDQ&oe=692A968C",
+  ]
+
+  let currentIndex = 0
+
+  // Set initial image
+  heroBg.style.backgroundImage = `url("${images[currentIndex]}")`
+
+  setInterval(() => {
+    currentIndex = (currentIndex + 1) % images.length
+    heroBg.style.opacity = "0"
+
+    setTimeout(() => {
+      heroBg.style.backgroundImage = `url("${images[currentIndex]}")`
+      heroBg.style.opacity = "1"
+    }, 750)
+  }, 5000)
+}
+
 function setupParallax() {
   const heroBg = document.getElementById("heroBg")
 
@@ -289,7 +297,7 @@ function setupParallax() {
 }
 
 // Load all data from Firebase or localStorage
-async function loadAllData() {
+async function loadAllContent() {
   if (firebaseInitialized) {
     try {
       const newsSnapshot = await db.ref("news").once("value")
@@ -394,79 +402,104 @@ function renderMatches() {
 function renderPlayers() {
   const field = document.getElementById("footballField")
 
-  // Add field SVG lines with higher z-index
-  field.innerHTML = `
-        <svg class="field-lines" viewBox="0 0 100 100" preserveAspectRatio="none" style="z-index: 2;">
-            <line x1="0" y1="50" x2="100" y2="50" stroke="rgba(255,255,255,0.5)" stroke-width="0.4"/>
-            <circle cx="50" cy="50" r="10" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="0.4"/>
-            <circle cx="50" cy="50" r="1" fill="rgba(255,255,255,0.5)"/>
-            <rect x="20" y="0" width="60" height="18" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="0.4"/>
-            <rect x="20" y="82" width="60" height="18" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="0.4"/>
-            <rect x="35" y="0" width="30" height="8" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="0.4"/>
-            <rect x="35" y="92" width="30" height="8" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="0.4"/>
-            <path d="M 30 18 Q 50 23 70 18" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="0.4"/>
-            <path d="M 30 82 Q 50 77 70 82" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="0.4"/>
-        </svg>
-    `
-
-  // Add players with z-index: 10
+  // Count players by position
+  const positionCounts = { GK: 0, DF: 0, MF: 0, FW: 0 }
   playersData.forEach((player) => {
+    if (positionCounts[player.position] !== undefined) {
+      positionCounts[player.position]++
+    }
+  })
+
+  // Track indices for each position
+  const positionIndices = { GK: 0, DF: 0, MF: 0, FW: 0 }
+
+  field.innerHTML = `
+    <svg class="field-lines" viewBox="0 0 100 100" preserveAspectRatio="none" style="z-index: 2;">
+      <line x1="0" y1="50" x2="100" y2="50" stroke="rgba(255,255,255,0.5)" stroke-width="0.4"/>
+      <circle cx="50" cy="50" r="10" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="0.4"/>
+      <circle cx="50" cy="50" r="1" fill="rgba(255,255,255,0.5)"/>
+      <rect x="20" y="0" width="60" height="18" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="0.4"/>
+      <rect x="20" y="82" width="60" height="18" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="0.4"/>
+      <rect x="35" y="0" width="30" height="8" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="0.4"/>
+      <rect x="35" y="92" width="30" height="8" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="0.4"/>
+      <path d="M 30 18 Q 50 23 70 18" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="0.4"/>
+      <path d="M 30 82 Q 50 77 70 82" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="0.4"/>
+    </svg>
+  `
+
+  playersData.forEach((player) => {
+    // Use manual position if provided, otherwise calculate automatically
+    let x, y
+    if (player.x !== undefined && player.y !== undefined) {
+      x = player.x
+      y = player.y
+    } else {
+      const pos = calculatePlayerPosition(
+        player.position,
+        positionIndices[player.position],
+        positionCounts[player.position],
+      )
+      x = pos.x
+      y = pos.y
+      positionIndices[player.position]++
+    }
+
     const playerDiv = document.createElement("div")
     playerDiv.className = "player"
-    playerDiv.style.left = `${player.x}%`
-    playerDiv.style.top = `${player.y}%`
+    playerDiv.style.left = `${x}%`
+    playerDiv.style.top = `${y}%`
     playerDiv.style.zIndex = "10"
 
     playerDiv.innerHTML = `
-            <div class="player-circle ${player.position.toLowerCase()}">
-                ${player.number}
+      <div class="player-circle ${player.position.toLowerCase()}">
+        ${player.number}
+      </div>
+      <div class="player-name">
+        <div class="player-name-tag">${player.name}</div>
+      </div>
+      <div class="player-hover-card">
+        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+          <div class="player-circle ${player.position.toLowerCase()}" style="width: 48px; height: 48px; font-size: 1.25rem;">
+            ${player.number}
+          </div>
+          <div>
+            <h3 style="font-size: 1.125rem; font-weight: 700;">${player.name}</h3>
+            <p style="color: var(--color-gray-600); font-size: 0.875rem;">${player.position}</p>
+          </div>
+        </div>
+        <div style="font-size: 0.875rem;">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+            <span style="color: var(--color-gray-600);">Wiek:</span>
+            <span style="font-weight: 600;">${player.age} lat</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+            <span style="color: var(--color-gray-600);">Narodowość:</span>
+            <span style="font-weight: 600;">${player.nationality}</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+            <span style="color: var(--color-gray-600);">Wzrost:</span>
+            <span style="font-weight: 600;">${player.height}</span>
+          </div>
+          <div style="padding-top: 12px; border-top: 1px solid var(--border-color);">
+            <p style="color: var(--color-gray-600); margin-bottom: 8px; font-size: 0.75rem;">Statystyki sezonu:</p>
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
+              <div style="text-align: center;">
+                <p style="font-size: 1.5rem; font-weight: 700; color: var(--color-accent);">${player.stats.matches}</p>
+                <p style="font-size: 0.75rem; color: var(--color-gray-600);">Mecze</p>
+              </div>
+              <div style="text-align: center;">
+                <p style="font-size: 1.5rem; font-weight: 700; color: var(--color-accent);">${player.stats.goals}</p>
+                <p style="font-size: 0.75rem; color: var(--color-gray-600);">Gole</p>
+              </div>
+              <div style="text-align: center;">
+                <p style="font-size: 1.5rem; font-weight: 700; color: var(--color-accent);">${player.stats.assists}</p>
+                <p style="font-size: 0.75rem; color: var(--color-gray-600);">Asysty</p>
+              </div>
             </div>
-            <div class="player-name">
-                <div class="player-name-tag">${player.name}</div>
-            </div>
-            <div class="player-hover-card">
-                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
-                    <div class="player-circle ${player.position.toLowerCase()}" style="width: 48px; height: 48px; font-size: 1.25rem;">
-                        ${player.number}
-                    </div>
-                    <div>
-                        <h3 style="font-size: 1.125rem; font-weight: 700;">${player.name}</h3>
-                        <p style="color: var(--color-gray); font-size: 0.875rem;">${player.position}</p>
-                    </div>
-                </div>
-                <div style="font-size: 0.875rem;">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                        <span style="color: var(--color-gray);">Wiek:</span>
-                        <span style="font-weight: 600;">${player.age} lat</span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                        <span style="color: var(--color-gray);">Narodowość:</span>
-                        <span style="font-weight: 600;">${player.nationality}</span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
-                        <span style="color: var(--color-gray);">Wzrost:</span>
-                        <span style="font-weight: 600;">${player.height}</span>
-                    </div>
-                    <div style="padding-top: 12px; border-top: 1px solid var(--border-color);">
-                        <p style="color: var(--color-gray); margin-bottom: 8px; font-size: 0.75rem;">Statystyki sezonu:</p>
-                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
-                            <div style="text-align: center;">
-                                <p style="font-size: 1.5rem; font-weight: 700; color: var(--color-green);">${player.stats.matches}</p>
-                                <p style="font-size: 0.75rem; color: var(--color-gray);">Mecze</p>
-                            </div>
-                            <div style="text-align: center;">
-                                <p style="font-size: 1.5rem; font-weight: 700; color: var(--color-green);">${player.stats.goals}</p>
-                                <p style="font-size: 0.75rem; color: var(--color-gray);">Gole</p>
-                            </div>
-                            <div style="text-align: center;">
-                                <p style="font-size: 1.5rem; font-weight: 700; color: var(--color-green);">${player.stats.assists}</p>
-                                <p style="font-size: 0.75rem; color: var(--color-gray);">Asysty</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `
+          </div>
+        </div>
+      </div>
+    `
 
     playerDiv.addEventListener("click", () => showPlayerModal(player))
     field.appendChild(playerDiv)
@@ -485,36 +518,36 @@ function showPlayerModal(player) {
             </div>
             <div>
                 <h2 style="font-size: 1.875rem; font-weight: 700;">${player.name}</h2>
-                <p style="font-size: 1.125rem; color: var(--color-gray);">${player.position}</p>
+                <p style="font-size: 1.125rem; color: var(--color-gray-600);">${player.position}</p>
             </div>
         </div>
         <div style="display: flex; flex-direction: column; gap: 1rem;">
             <div style="display: flex; justify-between; padding: 1rem 0; border-bottom: 1px solid var(--border-color);">
-                <span style="color: var(--color-gray);">Wiek:</span>
+                <span style="color: var(--color-gray-600);">Wiek:</span>
                 <span style="font-weight: 600; font-size: 1.125rem;">${player.age} lat</span>
             </div>
             <div style="display: flex; justify-between; padding: 1rem 0; border-bottom: 1px solid var(--border-color);">
-                <span style="color: var(--color-gray);">Narodowość:</span>
+                <span style="color: var(--color-gray-600);">Narodowość:</span>
                 <span style="font-weight: 600; font-size: 1.125rem;">${player.nationality}</span>
             </div>
             <div style="display: flex; justify-between; padding: 1rem 0; border-bottom: 1px solid var(--border-color);">
-                <span style="color: var(--color-gray);">Wzrost:</span>
+                <span style="color: var(--color-gray-600);">Wzrost:</span>
                 <span style="font-weight: 600; font-size: 1.125rem;">${player.height}</span>
             </div>
             <div style="padding-top: 1rem;">
                 <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem;">Statystyki sezonu</h3>
                 <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;">
                     <div style="background: var(--bg-color); padding: 1rem; border-radius: 12px; text-align: center;">
-                        <p style="font-size: 2.5rem; font-weight: 700; color: var(--color-green); margin-bottom: 4px;">${player.stats.matches}</p>
-                        <p style="font-size: 0.875rem; color: var(--color-gray);">Mecze</p>
+                        <p style="font-size: 2.5rem; font-weight: 700; color: var(--color-accent); margin-bottom: 4px;">${player.stats.matches}</p>
+                        <p style="font-size: 0.875rem; color: var(--color-gray-600);">Mecze</p>
                     </div>
                     <div style="background: var(--bg-color); padding: 1rem; border-radius: 12px; text-align: center;">
-                        <p style="font-size: 2.5rem; font-weight: 700; color: var(--color-green); margin-bottom: 4px;">${player.stats.goals}</p>
-                        <p style="font-size: 0.875rem; color: var(--color-gray);">Gole</p>
+                        <p style="font-size: 2.5rem; font-weight: 700; color: var(--color-accent); margin-bottom: 4px;">${player.stats.goals}</p>
+                        <p style="font-size: 0.875rem; color: var(--color-gray-600);">Gole</p>
                     </div>
                     <div style="background: var(--bg-color); padding: 1rem; border-radius: 12px; text-align: center;">
-                        <p style="font-size: 2.5rem; font-weight: 700; color: var(--color-green); margin-bottom: 4px;">${player.stats.assists}</p>
-                        <p style="font-size: 0.875rem; color: var(--color-gray);">Asysty</p>
+                        <p style="font-size: 2.5rem; font-weight: 700; color: var(--color-accent); margin-bottom: 4px;">${player.stats.assists}</p>
+                        <p style="font-size: 0.875rem; color: var(--color-gray-600);">Asysty</p>
                     </div>
                 </div>
             </div>
@@ -570,7 +603,7 @@ function renderSponsors() {
   sponsorsGrid.innerHTML = sponsorsData
     .map(
       (sponsor) => `
-        <a href="${sponsor.website || "#"}" target="_blank" class="sponsor-item">
+        <a href="${sponsor.website || "#"}" class="sponsor-item" target="_blank" rel="noopener noreferrer">
             <img src="${sponsor.logo}" alt="${sponsor.name}">
         </a>
     `,
@@ -583,4 +616,34 @@ function saveMessageToLocalStorage(message) {
   const messages = JSON.parse(localStorage.getItem("messages")) || []
   messages.push(message)
   localStorage.setItem("messages", JSON.stringify(messages))
+}
+
+// Automatic player positioning function based on position
+function calculatePlayerPosition(position, index, total) {
+  const positions = {
+    GK: [{ x: 50, y: 93 }],
+    DF: [
+      { x: 20, y: 75 },
+      { x: 40, y: 78 },
+      { x: 60, y: 78 },
+      { x: 80, y: 75 },
+    ],
+    MF: [
+      { x: 25, y: 50 },
+      { x: 50, y: 48 },
+      { x: 75, y: 50 },
+    ],
+    FW: [
+      { x: 35, y: 22 },
+      { x: 65, y: 22 },
+    ],
+  }
+
+  const positionArray = positions[position] || []
+  return positionArray[index % positionArray.length] || { x: 50, y: 50 }
+}
+
+// Update Footer Year
+function updateFooterYear() {
+  document.getElementById("currentYear").textContent = new Date().getFullYear()
 }
