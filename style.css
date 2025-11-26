@@ -1010,6 +1010,16 @@ section {
   gap: 1rem;
 }
 
+/* Changed matches layout from single column to responsive grid */
+@media (min-width: 768px) {
+  .matches-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    max-width: 1000px;
+    gap: 1.5rem;
+  }
+}
+
 .match-card {
   background: var(--glass-bg);
   backdrop-filter: blur(20px);
