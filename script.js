@@ -16,10 +16,12 @@ let db = null
 function initFirebase() {
   try {
     if (firebaseConfig.apiKey !== "YOUR_API_KEY") {
-      firebase.initializeApp(firebaseConfig)
+      if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig)
+      }
       db = firebase.database()
       firebaseInitialized = true
-      console.log("[v0] Firebase initialized on main page")
+      console.log("[v0] Firebase initialized successfully")
     } else {
       console.log("[v0] Firebase not configured - using localStorage fallback")
     }
@@ -40,43 +42,44 @@ document.addEventListener("DOMContentLoaded", () => {
   showPageLoader()
 
   initFirebase()
-  setupNavigation()
-  setupMobileMenu()
-  setupHiddenAdminButton()
-  setupHeroSlideshow()
-  setupParallax()
-  setupScrollIndicator()
-  setupScrollAnimations()
-  setupNavbarScrollEffect()
-  loadAllContent()
-  setupContactForm()
-  setupGalleryModal() // Updated call
-  updateFooterYear()
 
-  const newsModal = document.getElementById("newsModal")
-  const closeNewsModal = document.getElementById("closeNewsModal")
-  const newsModalOverlay = document.getElementById("newsModalOverlay")
-
-  // Close on X button
-  closeNewsModal.addEventListener("click", () => {
-    newsModal.classList.remove("active")
-  })
-
-  // Close on overlay click
-  newsModalOverlay.addEventListener("click", () => {
-    newsModal.classList.remove("active")
-  })
-
-  // Close on Escape key
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape" && newsModal.classList.contains("active")) {
-      newsModal.classList.remove("active")
-    }
-  })
-
+  // Wait a bit to ensure Firebase is ready
   setTimeout(() => {
-    hidePageLoader()
-  }, 500)
+    setupNavigation()
+    setupMobileMenu()
+    setupHiddenAdminButton()
+    setupHeroSlideshow()
+    setupParallax()
+    setupScrollIndicator()
+    setupScrollAnimations()
+    setupNavbarScrollEffect()
+    loadAllContent()
+    setupContactForm()
+    setupGalleryModal()
+    updateFooterYear()
+
+    const newsModal = document.getElementById("newsModal")
+    const closeNewsModal = document.getElementById("closeNewsModal")
+    const newsModalOverlay = document.getElementById("newsModalOverlay")
+
+    closeNewsModal.addEventListener("click", () => {
+      newsModal.classList.remove("active")
+    })
+
+    newsModalOverlay.addEventListener("click", () => {
+      newsModal.classList.remove("active")
+    })
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && newsModal.classList.contains("active")) {
+        newsModal.classList.remove("active")
+      }
+    })
+
+    setTimeout(() => {
+      hidePageLoader()
+    }, 500)
+  }, 100)
 })
 
 function showPageLoader() {
@@ -322,17 +325,21 @@ function setupContactForm() {
       read: false,
     }
 
-    // Save to Firebase or localStorage
-    if (firebaseInitialized) {
+    console.log("[v0] Attempting to send message")
+    console.log("[v0] Firebase initialized:", firebaseInitialized)
+    console.log("[v0] DB object exists:", !!db)
+
+    if (firebaseInitialized && db) {
       try {
+        console.log("[v0] Saving to Firebase Realtime Database...")
         await db.ref(`messages/${message.id}`).set(message)
-        console.log("[v0] Message saved to Firebase")
+        console.log("[v0] Message saved to Firebase successfully!")
       } catch (error) {
-        console.error("[v0] Firebase save error:", error)
-        saveMessageToLocalStorage(message)
+        console.error("[v0] Firebase save failed:", error.message)
+        console.error("[v0] Full error:", error)
       }
     } else {
-      saveMessageToLocalStorage(message)
+      console.error("[v0] Firebase not ready - firebaseInitialized:", firebaseInitialized, "db:", !!db)
     }
 
     document.getElementById("formSuccess").style.display = "block"
@@ -343,7 +350,6 @@ function setupContactForm() {
   })
 }
 
-// Updated setupGalleryModal function
 function setupGalleryModal() {
   document.getElementById("closeGalleryModal").addEventListener("click", () => {
     document.getElementById("galleryModal").classList.remove("active")
@@ -369,7 +375,7 @@ function setupHeroSlideshow() {
 
   const images = [
     "https://scontent-waw2-2.xx.fbcdn.net/v/t39.30808-6/579346311_1410024237794073_7552477781595665059_n.jpg?_nc_cat=106&ccb=1-7&_nc_sid=127cfc&_nc_ohc=GQyzNJck9xcQ7kNvwEjFCE0&_nc_oc=AdlJgP0KdsfwYt9usD5glwclotELzaZCm7UtMZm0OChENLNdKUh59LjCPI2tNSRMyg0&_nc_zt=23&_nc_ht=scontent-waw2-2.xx&_nc_gid=prrToiwyxpwZXYNTqKI3DQ&oh=00_AfhzqEvPUI7_7DPiD-NqmfKQOfiihy9NrstiSfMPi8V0SQ&oe=692C1322",
-    "https://scontent-waw2-2.xx.fbcdn.net/v/t39.30808-6/580634285_1410024461127384_5793941285239069198_n.jpg?_nc_cat=106&ccb=1-7&_nc_sid=127cfc&_nc_ohc=BzHjdQQf8oEQ7kNvwHwFvRx&_nc_oc=Adn0SmmKEPU9YC2fxNVzafJiNBLki8aTEBnP9CxIFl8ZuD33-bl4xdaIG8m5yEvZFKo&_nc_zt=23&_nc_ht=scontent-waw2-2.xx&_nc_gid=G9hNadHr8KFO4gErEbdZvw&oh=00_Afh1pNcm043StYUHWcORKS72LymYwPqDWiSJ_ZKElIVjQg&oe=692ABAD1",
+    "https://scontent-waw2-2.xx.fbcdn.net/v/t39.30808-6/580634285_1410024461127384_5793941288335673739_n.jpg?_nc_cat=106&ccb=1-7&_nc_sid=127cfc&_nc_ohc=BzHjdQQf8oEQ7kNvwHwFvRx&_nc_oc=Adn0SmmKEPU9YC2fxNVzafJiNBLki8aTEBnP9CxIFl8ZuD33-bl4xdaIG8m5yEvZFKo&_nc_zt=23&_nc_ht=scontent-waw2-2.xx&_nc_gid=G9hNadHr8KFO4gErEbdZvw&oh=00_Afh1pNcm043StYUHWcORKS72LymYwPqDWiSJ_ZKElIVjQg&oe=692ABAD1",
     "https://scontent-waw2-1.xx.fbcdn.net/v/t39.30808-6/583666310_1416925130437317_8222392288335673739_n.jpg?_nc_cat=109&ccb=1-7&_nc_sid=127cfc&_nc_ohc=pOc_3FUZkR0Q7kNvwGKevX2&_nc_oc=Adk8Yb5Hv26ljGzWrXTqsRqrh-TkK5mknjGaNt-_-76IbX0syN5iGTkbPHFPypf5Ljk&_nc_zt=23&_nc_ht=scontent-waw2-1.xx&_nc_gid=Tg2207mRJYy1vCf7UlQRiQ&oh=00_AfhE1aKnCPftYKZY9mugwPBFrk1d3AjHc2T0spzlxKRtDQ&oe=692A968C",
   ]
 
@@ -767,6 +773,7 @@ function saveMessageToLocalStorage(message) {
   const messages = JSON.parse(localStorage.getItem("messages")) || []
   messages.push(message)
   localStorage.setItem("messages", JSON.stringify(messages))
+  console.log("[v0] Message saved to localStorage (Firebase fallback)")
 }
 
 function calculatePlayerPosition(position, playerIndex, totalPlayers, playerId) {
