@@ -50,7 +50,7 @@ document.addEventListener("DOMContentLoaded", () => {
   setupNavbarScrollEffect()
   loadAllContent()
   setupContactForm()
-  setupLightbox()
+  setupGalleryModal() // Updated call
   updateFooterYear()
 
   const newsModal = document.getElementById("newsModal")
@@ -73,7 +73,6 @@ document.addEventListener("DOMContentLoaded", () => {
       newsModal.classList.remove("active")
     }
   })
-  // END CHANGE
 
   setTimeout(() => {
     hidePageLoader()
@@ -344,15 +343,23 @@ function setupContactForm() {
   })
 }
 
-function setupLightbox() {
-  document.getElementById("closeLightbox").addEventListener("click", () => {
-    document.getElementById("lightbox").classList.remove("active")
+// Updated setupGalleryModal function
+function setupGalleryModal() {
+  document.getElementById("closeGalleryModal").addEventListener("click", () => {
+    document.getElementById("galleryModal").classList.remove("active")
   })
 
-  // Close modals on background click
-  document.getElementById("lightbox").addEventListener("click", (e) => {
-    if (e.target.id === "lightbox") {
-      document.getElementById("lightbox").classList.remove("active")
+  // Close modal on background click
+  document.getElementById("galleryModal").addEventListener("click", (e) => {
+    if (e.target.id === "galleryModal" || e.target.id === "galleryModalOverlay") {
+      document.getElementById("galleryModal").classList.remove("active")
+    }
+  })
+
+  // Close modal on ESC key
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      document.getElementById("galleryModal").classList.remove("active")
     }
   })
 }
@@ -361,7 +368,6 @@ function setupHeroSlideshow() {
   const heroBg = document.getElementById("heroBg")
 
   const images = [
-    "https://scontent-waw2-1.xx.fbcdn.net/v/t39.30808-6/568952751_1393068179489679_1242343292601629705_n.jpg?_nc_cat=104&ccb=1-7&_nc_sid=cc71e4&_nc_ohc=7fWcfM_xYeMQ7kNvwEWcAS6&_nc_oc=AdlMoMdnsfq5EWaDwOgFP3O7T280xCFJ7qHSq1MEM4VgLam43oEZyuJ16CM1w3Zn_ac&_nc_zt=23&_nc_ht=scontent-waw2-1.xx&_nc_gid=BtWJPL6OmZNCdEMAQ9Tl7Q&oh=00_Afhxk_vNhAujSy-4wtm6YhZbEVgvdPe_uvZnh2guxdWfsA&oe=692AA157",
     "https://scontent-waw2-2.xx.fbcdn.net/v/t39.30808-6/579346311_1410024237794073_7552477781595665059_n.jpg?_nc_cat=106&ccb=1-7&_nc_sid=127cfc&_nc_ohc=GQyzNJck9xcQ7kNvwEjFCE0&_nc_oc=AdlJgP0KdsfwYt9usD5glwclotELzaZCm7UtMZm0OChENLNdKUh59LjCPI2tNSRMyg0&_nc_zt=23&_nc_ht=scontent-waw2-2.xx&_nc_gid=prrToiwyxpwZXYNTqKI3DQ&oh=00_AfhzqEvPUI7_7DPiD-NqmfKQOfiihy9NrstiSfMPi8V0SQ&oe=692C1322",
     "https://scontent-waw2-2.xx.fbcdn.net/v/t39.30808-6/580634285_1410024461127384_5793941285239069198_n.jpg?_nc_cat=106&ccb=1-7&_nc_sid=127cfc&_nc_ohc=BzHjdQQf8oEQ7kNvwHwFvRx&_nc_oc=Adn0SmmKEPU9YC2fxNVzafJiNBLki8aTEBnP9CxIFl8ZuD33-bl4xdaIG8m5yEvZFKo&_nc_zt=23&_nc_ht=scontent-waw2-2.xx&_nc_gid=G9hNadHr8KFO4gErEbdZvw&oh=00_Afh1pNcm043StYUHWcORKS72LymYwPqDWiSJ_ZKElIVjQg&oe=692ABAD1",
     "https://scontent-waw2-1.xx.fbcdn.net/v/t39.30808-6/583666310_1416925130437317_8222392288335673739_n.jpg?_nc_cat=109&ccb=1-7&_nc_sid=127cfc&_nc_ohc=pOc_3FUZkR0Q7kNvwGKevX2&_nc_oc=Adk8Yb5Hv26ljGzWrXTqsRqrh-TkK5mknjGaNt-_-76IbX0syN5iGTkbPHFPypf5Ljk&_nc_zt=23&_nc_ht=scontent-waw2-1.xx&_nc_gid=Tg2207mRJYy1vCf7UlQRiQ&oh=00_AfhE1aKnCPftYKZY9mugwPBFrk1d3AjHc2T0spzlxKRtDQ&oe=692A968C",
@@ -699,7 +705,7 @@ function showPlayerModal(player) {
   modal.classList.add("active")
 }
 
-// Render Gallery
+// Updated renderGallery function
 function renderGallery() {
   const galleryGrid = document.getElementById("galleryGrid")
 
@@ -711,7 +717,7 @@ function renderGallery() {
   galleryGrid.innerHTML = galleryData
     .map(
       (image, index) => `
-        <div class="gallery-item" style="animation-delay: ${index * 0.05}s" onclick="showLightbox('${image.url}', '${image.caption}', '${image.date}')">
+        <div class="gallery-item" style="animation-delay: ${index * 0.05}s" onclick="showGalleryModal('${image.url}', '${image.caption}', '${image.date}')">
             <img src="${image.url}" alt="${image.caption}">
             <div class="gallery-overlay">
                 <div class="gallery-caption">${image.caption}</div>
@@ -725,13 +731,13 @@ function renderGallery() {
   setupScrollAnimations()
 }
 
-// Show Lightbox
-function showLightbox(url, caption, date) {
-  const lightbox = document.getElementById("lightbox")
-  document.getElementById("lightboxImg").src = url
-  document.getElementById("lightboxCaption").textContent = caption
-  document.getElementById("lightboxDate").textContent = new Date(date).toLocaleDateString("pl-PL")
-  lightbox.classList.add("active")
+// Updated showGalleryModal function
+function showGalleryModal(url, caption, date) {
+  const modal = document.getElementById("galleryModal")
+  document.getElementById("galleryModalImage").src = url
+  document.getElementById("galleryModalCaption").textContent = caption
+  document.getElementById("galleryModalDate").textContent = new Date(date).toLocaleDateString("pl-PL")
+  modal.classList.add("active")
 }
 
 // Render Sponsors
@@ -823,4 +829,3 @@ function showNewsModal(news) {
 
   newsModal.classList.add("active")
 }
-// END CHANGE
