@@ -370,6 +370,15 @@ body {
   transform: translateY(-2px);
 }
 
+/* Add styling for news images in admin list to limit size */
+.news-image {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
 /* Items List */
 .items-list {
   display: flex;

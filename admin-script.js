@@ -86,16 +86,58 @@ function setupForms() {
   document.getElementById("newsForm").addEventListener("submit", async (e) => {
     e.preventDefault()
     const formData = new FormData(e.target)
-    const newsItem = {
-      id: Date.now(),
-      title: formData.get("title"),
-      content: formData.get("content"),
-      date: formData.get("date"),
-    }
+    const fileInput = document.getElementById("newsImageFile")
+    const file = fileInput.files[0]
 
-    await saveData("news", newsItem)
-    e.target.reset()
-    loadNews()
+    let imageUrl = formData.get("imageUrl")
+
+    // If file is uploaded, use that instead of URL
+    if (file) {
+      const reader = new FileReader()
+      reader.onload = async (event) => {
+        imageUrl = event.target.result
+
+        const newsItem = {
+          id: Date.now(),
+          title: formData.get("title"),
+          content: formData.get("content"),
+          date: formData.get("date"),
+          imageUrl: imageUrl,
+        }
+
+        await saveData("news", newsItem)
+        e.target.reset()
+        fileInput.value = ""
+        document.getElementById("newsImagePreview").style.display = "none"
+        loadNews()
+      }
+      reader.readAsDataURL(file)
+    } else if (imageUrl) {
+      // Use URL if provided
+      const newsItem = {
+        id: Date.now(),
+        title: formData.get("title"),
+        content: formData.get("content"),
+        date: formData.get("date"),
+        imageUrl: imageUrl,
+      }
+
+      await saveData("news", newsItem)
+      e.target.reset()
+      loadNews()
+    } else {
+      // Allow without image
+      const newsItem = {
+        id: Date.now(),
+        title: formData.get("title"),
+        content: formData.get("content"),
+        date: formData.get("date"),
+      }
+
+      await saveData("news", newsItem)
+      e.target.reset()
+      loadNews()
+    }
   })
 
   // Match Form
@@ -319,6 +361,7 @@ async function loadNews() {
                 <div class="item-meta">${item.content.substring(0, 100)}...</div>
                 <div class="item-meta">${new Date(item.date).toLocaleDateString("pl-PL")}</div>
             </div>
+            ${item.imageUrl ? `<img src="${item.imageUrl}" alt="${item.title}" class="news-image" style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px; flex-shrink: 0;">` : ""}
             <div class="item-actions">
                 <button class="btn-delete" onclick="deleteNews(${item.id})">🗑️ Usuń</button>
             </div>
@@ -674,6 +717,21 @@ document.getElementById("sponsorLogoFile").addEventListener("change", (e) => {
       document.getElementById("sponsorPreviewName").textContent = file.name
       document.getElementById("sponsorPreviewSize").textContent = `${(file.size / 1024).toFixed(2)} KB`
       document.getElementById("sponsorLogoPreview").style.display = "flex"
+    }
+    reader.readAsDataURL(file)
+  }
+})
+
+// File upload handling for news images
+document.getElementById("newsImageFile").addEventListener("change", (e) => {
+  const file = e.target.files[0]
+  if (file) {
+    const reader = new FileReader()
+    reader.onload = (event) => {
+      document.getElementById("newsPreviewImg").src = event.target.result
+      document.getElementById("newsPreviewName").textContent = file.name
+      document.getElementById("newsPreviewSize").textContent = `${(file.size / 1024).toFixed(2)} KB`
+      document.getElementById("newsImagePreview").style.display = "flex"
     }
     reader.readAsDataURL(file)
   }

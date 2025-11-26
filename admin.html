@@ -113,6 +113,24 @@
                             <label>Treść</label>
                             <textarea name="content" required rows="4" placeholder="Treść aktualności..."></textarea>
                         </div>
+                        <!-- Add image upload for news similar to gallery -->
+                        <div class="form-group">
+                            <label>Dodaj zdjęcie</label>
+                            <input type="file" id="newsImageFile" accept="image/*">
+                            <small style="color: var(--text-secondary); display: block; margin-top: 0.5rem;">lub wpisz URL poniżej</small>
+                        </div>
+                        <div class="form-group">
+                            <label>URL Zdjęcia (opcjonalnie)</label>
+                            <input type="url" name="imageUrl" placeholder="https://example.com/image.jpg">
+                        </div>
+                        <div id="newsImagePreview" class="file-preview" style="display: none;">
+                            <img id="newsPreviewImg" src="/placeholder.svg" alt="Preview">
+                            <div class="file-preview-info">
+                                <div class="file-preview-name" id="newsPreviewName"></div>
+                                <div class="file-preview-size" id="newsPreviewSize"></div>
+                            </div>
+                        </div>
+                        <!-- END CHANGE -->
                         <div class="form-group">
                             <label>Data</label>
                             <input type="date" name="date" required>

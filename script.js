@@ -53,6 +53,28 @@ document.addEventListener("DOMContentLoaded", () => {
   setupLightbox()
   updateFooterYear()
 
+  const newsModal = document.getElementById("newsModal")
+  const closeNewsModal = document.getElementById("closeNewsModal")
+  const newsModalOverlay = document.getElementById("newsModalOverlay")
+
+  // Close on X button
+  closeNewsModal.addEventListener("click", () => {
+    newsModal.classList.remove("active")
+  })
+
+  // Close on overlay click
+  newsModalOverlay.addEventListener("click", () => {
+    newsModal.classList.remove("active")
+  })
+
+  // Close on Escape key
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && newsModal.classList.contains("active")) {
+      newsModal.classList.remove("active")
+    }
+  })
+  // END CHANGE
+
   setTimeout(() => {
     hidePageLoader()
   }, 500)
@@ -340,7 +362,7 @@ function setupHeroSlideshow() {
 
   const images = [
     "https://scontent-waw2-1.xx.fbcdn.net/v/t39.30808-6/568952751_1393068179489679_1242343292601629705_n.jpg?_nc_cat=104&ccb=1-7&_nc_sid=cc71e4&_nc_ohc=7fWcfM_xYeMQ7kNvwEWcAS6&_nc_oc=AdlMoMdnsfq5EWaDwOgFP3O7T280xCFJ7qHSq1MEM4VgLam43oEZyuJ16CM1w3Zn_ac&_nc_zt=23&_nc_ht=scontent-waw2-1.xx&_nc_gid=BtWJPL6OmZNCdEMAQ9Tl7Q&oh=00_Afhxk_vNhAujSy-4wtm6YhZbEVgvdPe_uvZnh2guxdWfsA&oe=692AA157",
-    "https://scontent-waw2-1.xx.fbcdn.net/v/t39.30808-6/584686196_1416924913770672_2254237206894719496_n.jpg?_nc_cat=108&ccb=1-7&_nc_sid=127cfc&_nc_ohc=yOqaJVeNDZ4Q7kNvwG5HXO-&_nc_oc=Adk9oMDJdCAzomM4y3IEVQNlmiVAqMJNFvHV1I0ig2W1KMSotRdffF82AxS_UPM0Pg8&_nc_zt=23&_nc_ht=scontent-waw2-1.xx&_nc_gid=CS3OqvscGu0STvv31IucSw&oh=00_AfgNaK8enU8rxktmo6srMdZrGIAPczbsKxoQQFoi0evRTw&oe=692ADFA6",
+    "https://scontent-waw2-2.xx.fbcdn.net/v/t39.30808-6/579346311_1410024237794073_7552477781595665059_n.jpg?_nc_cat=106&ccb=1-7&_nc_sid=127cfc&_nc_ohc=GQyzNJck9xcQ7kNvwEjFCE0&_nc_oc=AdlJgP0KdsfwYt9usD5glwclotELzaZCm7UtMZm0OChENLNdKUh59LjCPI2tNSRMyg0&_nc_zt=23&_nc_ht=scontent-waw2-2.xx&_nc_gid=prrToiwyxpwZXYNTqKI3DQ&oh=00_AfhzqEvPUI7_7DPiD-NqmfKQOfiihy9NrstiSfMPi8V0SQ&oe=692C1322",
     "https://scontent-waw2-2.xx.fbcdn.net/v/t39.30808-6/580634285_1410024461127384_5793941285239069198_n.jpg?_nc_cat=106&ccb=1-7&_nc_sid=127cfc&_nc_ohc=BzHjdQQf8oEQ7kNvwHwFvRx&_nc_oc=Adn0SmmKEPU9YC2fxNVzafJiNBLki8aTEBnP9CxIFl8ZuD33-bl4xdaIG8m5yEvZFKo&_nc_zt=23&_nc_ht=scontent-waw2-2.xx&_nc_gid=G9hNadHr8KFO4gErEbdZvw&oh=00_Afh1pNcm043StYUHWcORKS72LymYwPqDWiSJ_ZKElIVjQg&oe=692ABAD1",
     "https://scontent-waw2-1.xx.fbcdn.net/v/t39.30808-6/583666310_1416925130437317_8222392288335673739_n.jpg?_nc_cat=109&ccb=1-7&_nc_sid=127cfc&_nc_ohc=pOc_3FUZkR0Q7kNvwGKevX2&_nc_oc=Adk8Yb5Hv26ljGzWrXTqsRqrh-TkK5mknjGaNt-_-76IbX0syN5iGTkbPHFPypf5Ljk&_nc_zt=23&_nc_ht=scontent-waw2-1.xx&_nc_gid=Tg2207mRJYy1vCf7UlQRiQ&oh=00_AfhE1aKnCPftYKZY9mugwPBFrk1d3AjHc2T0spzlxKRtDQ&oe=692A968C",
   ]
@@ -364,15 +386,35 @@ function setupHeroSlideshow() {
 function setupParallax() {
   const heroBg = document.getElementById("heroBg")
 
-  window.addEventListener("scroll", () => {
-    const scrolled = window.pageYOffset
-    const heroHeight = window.innerHeight
+  let ticking = false
 
-    if (scrolled < heroHeight) {
-      const scale = 1.1 + (scrolled / heroHeight) * 0.15
-      const translateY = scrolled * 0.5
-      heroBg.style.transform = `scale(${scale}) translateY(${translateY}px)`
+  window.addEventListener("scroll", () => {
+    if (!ticking) {
+      requestAnimationFrame(() => {
+        const scrolled = window.pageYOffset
+        const heroHeight = window.innerHeight
+
+        if (scrolled < heroHeight) {
+          const parallaxFactor = scrolled * 0.5
+          heroBg.style.transform = `translateY(${parallaxFactor}px)`
+        }
+        ticking = false
+      })
+      ticking = true
     }
+  })
+
+  document.addEventListener("mousemove", (e) => {
+    const heroSection = document.getElementById("hero")
+    if (!heroSection) return
+
+    const rect = heroSection.getBoundingClientRect()
+    if (rect.top > window.innerHeight || rect.bottom < 0) return
+
+    const mouseX = (e.clientX / window.innerWidth - 0.5) * 30
+    const mouseY = (e.clientY / window.innerHeight - 0.5) * 30
+
+    heroBg.style.transform = `translateY(${window.pageYOffset * 0.5}px) translate(${mouseX}px, ${mouseY}px)`
   })
 }
 
@@ -433,9 +475,9 @@ function renderNews() {
     .slice(0, 3)
     .map(
       (news, index) => `
-        <div class="news-card" style="animation-delay: ${index * 0.1}s">
+        <div class="news-card" style="animation-delay: ${index * 0.1}s" onclick="showNewsModal(${JSON.stringify(news).replace(/"/g, "&quot;")})">
             <div class="news-card-img">
-                <img src="https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=600&q=80" alt="${news.title}">
+                <img src="${news.imageUrl || "https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=600&q=80"}" alt="${news.title}" onerror="this.src='https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=600&q=80'">
             </div>
             <div class="news-card-content">
                 <p class="news-card-date">${new Date(news.date).toLocaleDateString("pl-PL")}</p>
@@ -487,46 +529,60 @@ function renderMatches() {
 function renderPlayers() {
   const field = document.getElementById("footballField")
 
-  // Count players by position
-  const positionCounts = { GK: 0, DF: 0, MF: 0, FW: 0 }
+  const playersByPosition = { GK: [], DF: [], MF: [], FW: [] }
   playersData.forEach((player) => {
-    if (positionCounts[player.position] !== undefined) {
-      positionCounts[player.position]++
+    if (playersByPosition[player.position] !== undefined) {
+      playersByPosition[player.position].push(player)
     }
   })
 
-  // Track indices for each position
-  const positionIndices = { GK: 0, DF: 0, MF: 0, FW: 0 }
-
   field.innerHTML = `
-    <svg class="field-lines" viewBox="0 0 100 100" preserveAspectRatio="none" style="z-index: 2;">
-      <line x1="0" y1="50" x2="100" y2="50" stroke="rgba(255,255,255,0.5)" stroke-width="0.4"/>
-      <circle cx="50" cy="50" r="10" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="0.4"/>
-      <circle cx="50" cy="50" r="1" fill="rgba(255,255,255,0.5)"/>
-      <rect x="20" y="0" width="60" height="18" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="0.4"/>
-      <rect x="20" y="82" width="60" height="18" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="0.4"/>
-      <rect x="35" y="0" width="30" height="8" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="0.4"/>
-      <rect x="35" y="92" width="30" height="8" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="0.4"/>
-      <path d="M 30 18 Q 50 23 70 18" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="0.4"/>
-      <path d="M 30 82 Q 50 77 70 82" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="0.4"/>
+    <svg class="field-lines" viewBox="0 0 100 160" preserveAspectRatio="xMidYMid meet" style="position: absolute; inset: 0; width: 100%; height: 100%; z-index: 2;">
+      <!-- Field border -->
+      <rect x="0" y="0" width="100" height="160" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="0.5" vector-effect="non-scaling-stroke"/>
+      
+      <!-- Center line (horizontal line dividing halves) -->
+      <line x1="0" y1="80" x2="100" y2="80" stroke="rgba(255,255,255,0.5)" stroke-width="0.5" vector-effect="non-scaling-stroke"/>
+      
+      <!-- Center circle -->
+      <circle cx="50" cy="80" r="10" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="0.5" vector-effect="non-scaling-stroke"/>
+      <!-- Center spot -->
+      <circle cx="50" cy="80" r="1" fill="rgba(255,255,255,0.5)"/>
+      
+      <!-- Top (goal area 1) penalty area -->
+      <rect x="15" y="0" width="70" height="20" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="0.5" vector-effect="non-scaling-stroke"/>
+      <!-- Top goal area (small box) -->
+      <rect x="30" y="0" width="40" height="8" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="0.5" vector-effect="non-scaling-stroke"/>
+      
+      <!-- Bottom (goal area 2) penalty area -->
+      <rect x="15" y="140" width="70" height="20" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="0.5" vector-effect="non-scaling-stroke"/>
+      <!-- Bottom goal area (small box) -->
+      <rect x="30" y="152" width="40" height="8" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="0.5" vector-effect="non-scaling-stroke"/>
+      
+      <!-- Top corner arcs -->
+      <path d="M 15 0 Q 10 0 10 5" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="0.5" vector-effect="non-scaling-stroke"/>
+      <path d="M 85 0 Q 90 0 90 5" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="0.5" vector-effect="non-scaling-stroke"/>
+      
+      <!-- Bottom corner arcs -->
+      <path d="M 15 160 Q 10 160 10 155" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="0.5" vector-effect="non-scaling-stroke"/>
+      <path d="M 85 160 Q 90 160 90 155" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="0.5" vector-effect="non-scaling-stroke"/>
     </svg>
   `
 
   playersData.forEach((player) => {
-    // Use manual position if provided, otherwise calculate automatically
     let x, y
+
     if (player.x !== undefined && player.y !== undefined) {
       x = player.x
       y = player.y
     } else {
-      const pos = calculatePlayerPosition(
-        player.position,
-        positionIndices[player.position],
-        positionCounts[player.position],
-      )
+      const positionGroup = playersByPosition[player.position] || []
+      const playerIndex = positionGroup.findIndex((p) => p.id === player.id)
+      const indexToUse = playerIndex >= 0 ? playerIndex : 0
+
+      const pos = calculatePlayerPosition(player.position, indexToUse, positionGroup.length, player.id)
       x = pos.x
       y = pos.y
-      positionIndices[player.position]++
     }
 
     const playerDiv = document.createElement("div")
@@ -597,48 +653,48 @@ function showPlayerModal(player) {
   const content = document.getElementById("playerModalContent")
 
   content.innerHTML = `
-        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
-            <div class="player-circle ${player.position.toLowerCase()}" style="width: 80px; height: 80px; font-size: 2.5rem;">
-                ${player.number}
-            </div>
-            <div>
-                <h2 style="font-size: 1.875rem; font-weight: 700;">${player.name}</h2>
-                <p style="font-size: 1.125rem; color: var(--color-gray-600);">${player.position}</p>
-            </div>
+    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
+      <div class="player-circle ${player.position.toLowerCase()}" style="width: 80px; height: 80px; font-size: 2.5rem;">
+        ${player.number}
+      </div>
+      <div>
+        <h2 style="font-size: 1.875rem; font-weight: 700;">${player.name}</h2>
+        <p style="font-size: 1.125rem; color: var(--color-gray-600);">${player.position}</p>
+      </div>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 1rem;">
+      <div style="display: flex; justify-between; padding: 1rem 0; border-bottom: 1px solid var(--border-color);">
+        <span style="color: var(--color-gray-600);">Wiek:</span>
+        <span style="font-weight: 600; font-size: 1.125rem;">${player.age} lat</span>
+      </div>
+      <div style="display: flex; justify-between; padding: 1rem 0; border-bottom: 1px solid var(--border-color);">
+        <span style="color: var(--color-gray-600);">Narodowość:</span>
+        <span style="font-weight: 600; font-size: 1.125rem;">${player.nationality}</span>
+      </div>
+      <div style="display: flex; justify-between; padding: 1rem 0; border-bottom: 1px solid var(--border-color);">
+        <span style="color: var(--color-gray-600);">Wzrost:</span>
+        <span style="font-weight: 600; font-size: 1.125rem;">${player.height}</span>
+      </div>
+      <div style="padding-top: 1rem;">
+        <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem;">Statystyki sezonu</h3>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;">
+          <div style="background: var(--bg-color); padding: 1rem; border-radius: 12px; text-align: center;">
+            <p style="font-size: 2.5rem; font-weight: 700; color: var(--color-accent); margin-bottom: 4px;">${player.stats.matches}</p>
+            <p style="font-size: 0.875rem; color: var(--color-gray-600);">Mecze</p>
+          </div>
+          <div style="background: var(--bg-color); padding: 1rem; border-radius: 12px; text-align: center;">
+            <p style="font-size: 2.5rem; font-weight: 700; color: var(--color-accent); margin-bottom: 4px;">${player.stats.goals}</p>
+            <p style="font-size: 0.875rem; color: var(--color-gray-600);">Gole</p>
+          </div>
+          <div style="background: var(--bg-color); padding: 1rem; border-radius: 12px; text-align: center;">
+            <p style="font-size: 2.5rem; font-weight: 700; color: var(--color-accent); margin-bottom: 4px;">${player.stats.assists}</p>
+            <p style="font-size: 0.875rem; color: var(--color-gray-600);">Asysty</p>
+          </div>
         </div>
-        <div style="display: flex; flex-direction: column; gap: 1rem;">
-            <div style="display: flex; justify-between; padding: 1rem 0; border-bottom: 1px solid var(--border-color);">
-                <span style="color: var(--color-gray-600);">Wiek:</span>
-                <span style="font-weight: 600; font-size: 1.125rem;">${player.age} lat</span>
-            </div>
-            <div style="display: flex; justify-between; padding: 1rem 0; border-bottom: 1px solid var(--border-color);">
-                <span style="color: var(--color-gray-600);">Narodowość:</span>
-                <span style="font-weight: 600; font-size: 1.125rem;">${player.nationality}</span>
-            </div>
-            <div style="display: flex; justify-between; padding: 1rem 0; border-bottom: 1px solid var(--border-color);">
-                <span style="color: var(--color-gray-600);">Wzrost:</span>
-                <span style="font-weight: 600; font-size: 1.125rem;">${player.height}</span>
-            </div>
-            <div style="padding-top: 1rem;">
-                <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem;">Statystyki sezonu</h3>
-                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;">
-                    <div style="background: var(--bg-color); padding: 1rem; border-radius: 12px; text-align: center;">
-                        <p style="font-size: 2.5rem; font-weight: 700; color: var(--color-accent); margin-bottom: 4px;">${player.stats.matches}</p>
-                        <p style="font-size: 0.875rem; color: var(--color-gray-600);">Mecze</p>
-                    </div>
-                    <div style="background: var(--bg-color); padding: 1rem; border-radius: 12px; text-align: center;">
-                        <p style="font-size: 2.5rem; font-weight: 700; color: var(--color-accent); margin-bottom: 4px;">${player.stats.goals}</p>
-                        <p style="font-size: 0.875rem; color: var(--color-gray-600);">Gole</p>
-                    </div>
-                    <div style="background: var(--bg-color); padding: 1rem; border-radius: 12px; text-align: center;">
-                        <p style="font-size: 2.5rem; font-weight: 700; color: var(--color-accent); margin-bottom: 4px;">${player.stats.assists}</p>
-                        <p style="font-size: 0.875rem; color: var(--color-gray-600);">Asysty</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <button onclick="document.getElementById('playerModal').classList.remove('active')" class="btn btn-primary btn-block" style="margin-top: 1.5rem;">Zamknij</button>
-    `
+      </div>
+    </div>
+    <button onclick="document.getElementById('playerModal').classList.remove('active')" class="btn btn-primary btn-block" style="margin-top: 1.5rem;">Zamknij</button>
+  `
 
   modal.classList.add("active")
 }
@@ -707,32 +763,64 @@ function saveMessageToLocalStorage(message) {
   localStorage.setItem("messages", JSON.stringify(messages))
 }
 
-// Automatic player positioning function based on position
-function calculatePlayerPosition(position, index, total) {
+function calculatePlayerPosition(position, playerIndex, totalPlayers, playerId) {
   const positions = {
-    GK: [{ x: 50, y: 93 }],
+    GK: [{ x: 50, y: 97 }],
     DF: [
-      { x: 20, y: 75 },
-      { x: 40, y: 78 },
-      { x: 60, y: 78 },
-      { x: 80, y: 75 },
+      { x: 15, y: 70 },
+      { x: 37, y: 72 },
+      { x: 63, y: 72 },
+      { x: 85, y: 70 },
     ],
     MF: [
-      { x: 25, y: 50 },
-      { x: 50, y: 48 },
-      { x: 75, y: 50 },
+      { x: 25, y: 45 },
+      { x: 50, y: 40 },
+      { x: 75, y: 45 },
     ],
     FW: [
-      { x: 35, y: 22 },
-      { x: 65, y: 22 },
+      { x: 35, y: 17 },
+      { x: 65, y: 17 },
     ],
   }
 
   const positionArray = positions[position] || []
-  return positionArray[index % positionArray.length] || { x: 50, y: 50 }
+
+  const slotIndex = playerIndex % positionArray.length
+  let pos = positionArray[slotIndex]
+
+  if (playerIndex >= positionArray.length) {
+    const offsetY = ((playerIndex - positionArray.length) * 8) % 30
+    pos = { x: pos.x, y: pos.y + offsetY }
+  }
+
+  console.log("[v0] Position:", position, "PlayerIndex:", playerIndex, "TotalPlayers:", totalPlayers, "Result:", pos)
+  return pos
 }
 
 // Update Footer Year
 function updateFooterYear() {
   document.getElementById("currentYear").textContent = new Date().getFullYear()
 }
+
+function showNewsModal(news) {
+  const newsModal = document.getElementById("newsModal")
+  const newsModalImage = document.getElementById("newsModalImage")
+  const newsModalTitle = document.getElementById("newsModalTitle")
+  const newsModalContent = document.getElementById("newsModalContent")
+  const newsModalDate = document.getElementById("newsModalDate")
+
+  newsModalImage.src = news.imageUrl || "https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=600&q=80"
+  newsModalImage.alt = news.title
+
+  newsModalTitle.textContent = news.title
+  newsModalContent.textContent = news.content
+  newsModalDate.textContent = new Date(news.date).toLocaleDateString("pl-PL", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  })
+
+  newsModal.classList.add("active")
+}
+// END CHANGE
